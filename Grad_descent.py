@@ -28,8 +28,8 @@ def integral(function, lower: float, upper: float, precision: float):
     while abs(left - right) > precision:
         left = left_integral(function, N, lower, upper)
         right = right_integral(function, N, lower, upper)
+        print(f'{N=}, {left=}, {right=}, {abs(left - right)}')
         N = 2 * N
-        print(N, ':', left, right, abs(left - right))
 
     return (left + right) / 2
 
@@ -42,7 +42,7 @@ def full_function(x: float, precision: float, function=function):
     return integral(function, 0, x, precision) + math.exp(-x * x)
 
 
-def gradient_descent(
+def graduate_descent(
     f, df, initial: float, lr: float, precision: float, max_iterations: int
 ):
     diff = 2 * precision
@@ -50,7 +50,10 @@ def gradient_descent(
     x = initial
 
     while diff > precision and max_iterations > 0:
-        x -= lr * df(x)
+        i = 1000
+        while i > 0:
+            x -= lr * df(x)
+            i -= 1
         value = f(x, precision)
         diff = abs(value - ret)
 
@@ -63,7 +66,7 @@ def gradient_descent(
 
 print(
     'result:',
-    gradient_descent(
+    graduate_descent(
         full_function,
         derivative,
         1.0,  # initial point; should be chosen randomly between 0 and 100
