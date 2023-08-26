@@ -1,5 +1,9 @@
 import math
 
+lower = 0
+upper = 0
+variable = 0
+
 
 def function(value: float):
     return math.sqrt(2 / math.pi) * math.exp(-(value**2))
@@ -30,8 +34,11 @@ def integral(function, lower: float, upper: float, precision: float):
         right = right_integral(function, N, lower, upper)
         print(f'{N=}, {left=}, {right=}, {abs(left - right)}')
         N = 2 * N
-
     return (left + right) / 2
+
+
+def ode(function, x: float, precision: float):
+    pass
 
 
 def derivative(x: float, function=function):
