@@ -55,17 +55,17 @@ def graduate_descent(
     diff = 2 * precision
     ret = f(initial, precision, function)
     x = initial
-
-    while diff > precision and max_iterations > 0:
-        i = 1000
-        while i > 0:
+    iter = 1
+    while diff > precision and iter < max_iterations:
+        i = 0
+        while i < iter:
             x -= lr * df(x)
-            i -= 1
+            i += 1
         value = f(x, precision)
         diff = abs(value - ret)
 
-        max_iterations -= 1
-        print(f'{max_iterations=} {x=} {ret=} {value=} {diff=}')
+        iter += 1
+        print(f'{iter=} {x=} {ret=} {value=} {diff=}')
         ret = value
 
     return ret
@@ -77,7 +77,7 @@ print(
         full_function,
         derivative,
         1.0,  # initial point; should be chosen randomly between 0 and 100
-        0.1,  # leaning rate
+        10,  # leaning rate
         0.0001,  # accuracy
         10000,  # max iterations
     ),
