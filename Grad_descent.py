@@ -58,7 +58,7 @@ def graduate_descent(
     iter = 1
     while diff > precision and iter < max_iterations:
         i = 0
-        while i < iter:
+        while i < 2*iter:
             x -= lr * df(x)
             i += 1
         value = f(x, precision)
