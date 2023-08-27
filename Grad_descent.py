@@ -50,7 +50,7 @@ def full_function(x: float, precision: float, function=function):
     return integral(function, 0, x, precision) + math.exp(-x * x)
 
 
-def graduate_descent(
+def gradient_descent(
     f, df, initial: float, lr: float, precision: float, max_iterations: int
 ):
     diff = 2 * precision
@@ -74,7 +74,7 @@ def graduate_descent(
 
 print(
     'result:',
-    graduate_descent(
+    gradient_descent(
         full_function,
         derivative,
         1.0,  # initial point; should be chosen randomly between 0 and 100
