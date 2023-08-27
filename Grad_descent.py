@@ -1,9 +1,5 @@
 import math
 
-lower = 0
-upper = 0
-variable = 0
-
 
 def function(value: float):
     return math.sqrt(2 / math.pi) * math.exp(-(value**2))
@@ -41,6 +37,11 @@ def ode(function, x: float, precision: float):
     pass
 
 
+ode.lower = 0
+ode.upper = 0
+ode.x = 0
+
+
 def derivative(x: float, function=function):
     return function(x) - 2 * x * math.exp(-x * x)
 
@@ -58,7 +59,7 @@ def graduate_descent(
     iter = 1
     while diff > precision and iter < max_iterations:
         i = 0
-        while i < iter:
+        while i < 2 * iter:
             x -= lr * df(x)
             i += 1
         value = f(x, precision)
@@ -78,7 +79,7 @@ print(
         derivative,
         1.0,  # initial point; should be chosen randomly between 0 and 100
         10,  # leaning rate
-        0.0001,  # accuracy
+        0.000001,  # accuracy
         10000,  # max iterations
     ),
 )
