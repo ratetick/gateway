@@ -1,0 +1,28 @@
+# Fdb version 4
+["pdflatex"] 1700061293 "/home/vlad/gateway/model.tex" "model.pdf" "model" 1700061293 1
+  "/home/vlad/gateway/model.tex" 1700061293 259 b50b3bce8fc9bbad15467b9eb7b26d81 ""
+  "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecrm1000.tfm" 1136768653 3584 adb004a0c8e7c46ee66cad73671f37b4 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm" 1254269338 12056 7e13df7fe4cbce21b072ba7c4f4deb6e ""
+  "/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty" 1644112042 7237 bdd120a32c8fdb4b433cf9ca2e7cd98a ""
+  "/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty" 1572645307 1057 525c2192b5febbd8c1f662c9468335bb ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/article.cls" 1684972800 20144 7555b7429d80bef287ebb82117811acc ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty" 1684972800 5119 4ce42f43368f652f9c9522d943cce8e4 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty" 1684972800 5048 84b05796b49b69e2d4257d537721c960 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo" 1684972800 8448 e0391042ca0932ede1098ae14ada60ba ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty" 1684972800 2894 f2f8ee7d4fb94263f9f255fa22cab2d3 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty" 1578002852 41601 9cf6c5257b1bc7af01a58859749dd37a ""
+  "/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty" 1654720880 2671 7e67d78d9b88c845599a85b2d41f2e39 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1666901542 30426 f2fb69fcda4dc35ed0b7dee211bce679 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/lastpage/lastpage.sty" 1630706891 10253 d1fb80bca50ae6aa432ccf86e6663bd0 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/lm/lmodern.sty" 1616454256 1608 b00724785a9e9c599e5181bb8729160b ""
+  "/usr/share/texlive/texmf-dist/tex/latex/lm/t1lmr.fd" 1616454256 1867 996fe743d88a01aca041ed22cc10e1bb ""
+  "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1684972800 40326 aba987258e6d6b6da5dec3a727ea174b ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1699894550 7863015 8e78084189ea2e2d0befade2195f1c2e ""
+  "model.aux" 1700061293 90 6a88bb11c54189ac8d73a189de6e8a8c "pdflatex"
+  "model.tex" 1700061293 259 b50b3bce8fc9bbad15467b9eb7b26d81 ""
+  (generated)
+  "model.aux"
+  "model.log"
+  "model.pdf"
+  (rewritten before read)
