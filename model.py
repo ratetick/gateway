@@ -14,6 +14,7 @@ from pylatex import (
     Alignat,
     NoEscape,
     Command,
+    MultiColumn,
 )
 from pylatex.utils import italic
 import os
@@ -157,7 +158,7 @@ def print_window(doc, stx, sty):
 if __name__ == "__main__":
     # image_filename = os.path.join(os.path.dirname(__file__), 'kitten.jpg')
 
-    geometry_options = {"tmargin": "4cm", "lmargin": "5cm", "bmargin": "1.2cm"}
+    geometry_options = {"tmargin": "4cm", "lmargin": "1cm", "bmargin": "1.2cm"}
 
     doc = Document(geometry_options=geometry_options, page_numbers=False)
     doc.preamble.append(Command("usepackage", "tikz"))
@@ -168,6 +169,7 @@ if __name__ == "__main__":
     background_noescape = f"\\backgroundsetup{{{background_setup}}}"
     doc.preamble.append(NoEscape(background_noescape))
     doc.append(Command("begin", "tikzpicture"))
+    doc.append(Command("centering"))
 
     #####################################################################
     # perimeter
@@ -338,11 +340,22 @@ if __name__ == "__main__":
     #    table.add_row((4, 5, 6, 7))
     doc.append(NoEscape(r"\vfill"))
 
-    with doc.create(Tabular("|c|c|", row_height="2cm")) as table:
+    with doc.create(Tabular("|c|c|c|c|c|", row_height=3)) as table:
         table.add_hline()
-        table.add_row(("Column 1", "Column 2"))
+        table.add_row(("Column 1", "", ",", "Column 2", ""))
+        table.add_hline(1, 2)
+        table.add_row(("Value 1", "Value 2", "", "", ""))
+        table.add_hline(2, 3)
+        table.add_row(("Value 1", "Value 2", "", "", ""))
         table.add_hline()
-        table.add_row(("Value 1", "Value 2"))
+        table.add_row(
+            (
+                MultiColumn(size=2, align="|c|", data="MultiColumn"),
+                "",
+                MultiColumn(size=2, align="|c|", data="MultiColumn2"),
+            ),
+            strict=True,
+        )
         table.add_hline()
 
     doc.generate_pdf("ml", clean_tex=False)
