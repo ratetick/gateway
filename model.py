@@ -145,6 +145,52 @@ def bathtab(doc, x, y, width, length):
     )
 
 
+def measurements(
+    doc,
+    orientation: bool,
+    x: float,
+    y: float,
+    dist: float,
+    offset: float,
+    dist_number: float,
+):
+    M = 0.15
+    if orientation == "hor":
+        doc.append(
+            NoEscape(
+                f"\draw[line width=1pt]{round(x,3),round(y-offset,3)}--{round(x,3),round(y,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                f"\draw[line width=1pt]{round(x+dist,3),round(y-offset,3)}--{round(x+dist,3),round(y,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                f"\draw{round(x,3),round(y-offset-M,3)}--{round(x+dist,3),round(y-offset-M,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                rf"\node[anchor=center,font=\large] at ({x+dist/2},{y-offset+2*M})"
+                + "{"
+                + f"{dist_number}"
+                + "};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                f"\draw{round(x-2*M,3),round(y-offset-M-2*M,3)}--{round(x+2*M,3),round(y-offset-M+2*M,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                f"\draw{round(x+dist-2*M,3),round(y-offset-M-2*M,3)}--{round(x+dist+2*M,3),round(y-offset-M+2*M,3)};"
+            )
+        )
+
+
 S = [
     0,  # 0
     6.33,  # 1
@@ -202,7 +248,7 @@ if __name__ == "__main__":
     # image_filename = os.path.join(os.path.dirname(__file__), 'kitten.jpg')
 
     geometry_options = {
-        "tmargin": "3cm",
+        "tmargin": "1.5cm",
         "lmargin": ".5cm",
         "bmargin": "1.2cm",
         "rmargin": ".6cm",
@@ -239,7 +285,7 @@ if __name__ == "__main__":
     stx = 0
     sty = 0
     print_latex(doc, VERT, HOR, stx, sty)
-
+    measurements(doc, "hor", 0, 0, -HOR[3], -2, -round(HOR[3], 2))
     # hallway
     VERT = []
     HOR = []
@@ -376,6 +422,7 @@ if __name__ == "__main__":
         doc, w[4] + S[7] + w[1] / 2, -2 * w[1] - S[9] - S[12] / 2, w[1], 0.7
     )  # kitchen door
     ##################################################
+
     bathtab(doc, w[4] + w[1], -2 * w[1], 0.75, 1.1)  # bathtab
     faucet(doc, S[8] / 2 + w[4], -1.5 * w[1], 0.6, 0.6)
     faucet(doc, S[13] + S[20] / 4 + w[4], -1.5 * w[1], 0.6, 0.6)

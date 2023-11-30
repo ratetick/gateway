@@ -35,7 +35,7 @@ def find_value(i, bound, Path, Term):
 
 n = 500
 T = 2
-NPATH = 10000
+NPATH = 100000
 INT = n * T
 bound = [0] * (INT)
 Path = [0] * NPATH
