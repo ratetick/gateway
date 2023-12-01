@@ -145,6 +145,14 @@ def bathtab(doc, x, y, width, length):
     )
 
 
+def draw_end_line(doc, x, y, len):
+    doc.append(
+        NoEscape(
+            f"\draw[line width=.1pt]{round(x-2*len,3),round(y-2*len,3)}--{round(x+2*len,3),round(y+2*len,3)};"
+        )
+    )
+
+
 def measurements(
     doc,
     orientation: bool,
@@ -155,22 +163,23 @@ def measurements(
     dist_number: float,
 ):
     M = 0.15
-    if orientation == "hor":
+    if orientation == "hor_top":
         doc.append(
             NoEscape(
-                f"\draw[line width=1pt]{round(x,3),round(y-offset,3)}--{round(x,3),round(y,3)};"
+                f"\draw[line width=.1pt]{round(x,3),round(y-offset,3)}--{round(x,3),round(y,3)};"
             )
         )
         doc.append(
             NoEscape(
-                f"\draw[line width=1pt]{round(x+dist,3),round(y-offset,3)}--{round(x+dist,3),round(y,3)};"
+                f"\draw[line width=.1pt]{round(x+dist,3),round(y-offset,3)}--{round(x+dist,3),round(y,3)};"
             )
         )
         doc.append(
             NoEscape(
-                f"\draw{round(x,3),round(y-offset-M,3)}--{round(x+dist,3),round(y-offset-M,3)};"
+                f"\draw[line width=.1pt]{round(x,3),round(y-offset-M,3)}--{round(x+dist,3),round(y-offset-M,3)};"
             )
         )
+
         doc.append(
             NoEscape(
                 rf"\node[anchor=center,font=\large] at ({x+dist/2},{y-offset+2*M})"
@@ -179,17 +188,57 @@ def measurements(
                 + "};"
             )
         )
+        draw_end_line(doc, x, y - offset - M, M)
+        draw_end_line(doc, x + dist, y - offset - M, M)
+        # doc.append(
+        #    NoEscape(
+        #        f"\draw[line width=.1pt]{round(x-2*M,3),round(y-offset-M-2*M,3)}--{round(x+2*M,3),round(y-offset-M+2*M,3)};"
+        #    )
+        # )
+        # doc.append(
+        #    NoEscape(
+        #        f"\draw[line width=.1pt]{round(x+dist-2*M,3),round(y-offset-M-2*M,3)}--{round(x+dist+2*M,3),round(y-offset-M+2*M,3)};"
+        #    )
+        # )
+    elif orientation == "vert_right":
         doc.append(
             NoEscape(
-                f"\draw{round(x-2*M,3),round(y-offset-M-2*M,3)}--{round(x+2*M,3),round(y-offset-M+2*M,3)};"
+                f"\draw[line width=.1pt]{round(x,3),round(y,3)}--{round(x+offset,3),round(y,3)};"
             )
         )
         doc.append(
             NoEscape(
-                f"\draw{round(x+dist-2*M,3),round(y-offset-M-2*M,3)}--{round(x+dist+2*M,3),round(y-offset-M+2*M,3)};"
+                f"\draw[line width=.1pt]{round(x,3),round(y-dist,3)}--{round(x+offset,3),round(y-dist,3)};"
             )
         )
+        doc.append(
+            NoEscape(
+                f"\draw{round(x+offset-M,3),round(y,3)}--{round(x+offset-M,3),round(y-dist,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                rf"\node[anchor=center,font=\large,rotate=90] at ({x+offset-4*M},{y-dist/2})"
+                + "{"
+                + f"{dist_number}"
+                + "};"
+            )
+        )
+        draw_end_line(doc, x - M + offset, y, M)
+        draw_end_line(doc, x - M + offset, y - dist, M)
+        # doc.append(
+        #    NoEscape(
+        #        f"\draw[line width=.1pt]{round(x-2*M-M+offset,3),round(y-2*M,3)}--{round(x+offset-M+2*M,3),round(y+2*M,3)};"
+        #    )
+        # )
+        # doc.append(
+        #    NoEscape(
+        #        f"\draw[line width=.1pt]{round(x+offset-2*M-M,3),round(y-dist-2*M,3)}--{round(x+offset-M+2*M,3),round(y-dist+2*M,3)};"
+        #    )
+        # )
 
+
+scale = 1.3
 
 S = [
     0,  # 0
@@ -218,11 +267,11 @@ S = [
     3.16,  # 23
     1.16,  # 24
 ]
-S = [i * 1.3 for i in S]
+S = [i * scale for i in S]
 
 w = [0, 0.145, 0.3, 0.4, 0.5, 0.6, 1.5]
 #    0     1    2     3    4   5    6
-w = [i * 1.3 for i in w]
+w = [i * scale for i in w]
 
 
 def print_window(doc, stx, sty):
@@ -285,7 +334,10 @@ if __name__ == "__main__":
     stx = 0
     sty = 0
     print_latex(doc, VERT, HOR, stx, sty)
-    measurements(doc, "hor", 0, 0, -HOR[3], -2, -round(HOR[3], 2))
+    measurements(doc, "hor_top", 0, 0, -HOR[3], -1.2, -round(HOR[3] / scale, 2))
+    measurements(doc, "vert_right", -HOR[3], 0, VERT[3], 1.2, round(VERT[3] / scale, 2))
+    ###########################################################
+
     # hallway
     VERT = []
     HOR = []
