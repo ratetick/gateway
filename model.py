@@ -226,6 +226,32 @@ def measurements(
         )
         draw_end_line(doc, x - M + offset, y, M)
         draw_end_line(doc, x - M + offset, y - dist, M)
+    elif orientation == "vert_left":
+        doc.append(
+            NoEscape(
+                f"\draw[line width=.1pt]{round(x,3),round(y,3)}--{round(x-offset,3),round(y,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                f"\draw[line width=.1pt]{round(x,3),round(y-dist,3)}--{round(x-offset,3),round(y-dist,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                f"\draw{round(x-offset+M,3),round(y,3)}--{round(x-offset+M,3),round(y-dist,3)};"
+            )
+        )
+        doc.append(
+            NoEscape(
+                rf"\node[anchor=center,font=\large,rotate=90] at ({x-offset-4*M},{y-dist/2})"
+                + "{"
+                + f"{dist_number}"
+                + "};"
+            )
+        )
+        draw_end_line(doc, x + M - offset, y, M)
+        draw_end_line(doc, x + M - offset, y - dist, M)
         # doc.append(
         #    NoEscape(
         #        f"\draw[line width=.1pt]{round(x-2*M-M+offset,3),round(y-2*M,3)}--{round(x+offset-M+2*M,3),round(y+2*M,3)};"
@@ -335,7 +361,7 @@ if __name__ == "__main__":
     sty = 0
     print_latex(doc, VERT, HOR, stx, sty)
     measurements(doc, "hor_top", 0, 0, -HOR[3], -1.2, -round(HOR[3] / scale, 2))
-    measurements(doc, "vert_right", -HOR[3], 0, VERT[3], 1.2, round(VERT[3] / scale, 2))
+    measurements(doc, "vert_left", 0, 0, VERT[3], 1.2, round(VERT[3] / scale, 2))
     ###########################################################
 
     # hallway
