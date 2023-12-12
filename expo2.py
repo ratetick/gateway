@@ -26,28 +26,26 @@ def find_max(Path, Term):
     return max
 
 
-def find_value(i, bound, Path, Term):
-    # print(int(math.exp(-i / n) * (1 - math.exp(-1 / n)) * NPATH))
+def find_value(i, bound, Path, Term,Step):
 
-    for k in range(int(math.exp(-i / n) * (1 - math.exp(-1 / n)) * NPATH)):
+    for k in range(int(math.exp(-i / Step) * (1 - math.exp(-1 / Step)) * NPATH)):
         bound[i] = find_max(Path, Term)
 
 
-n = 500
-T = 2
-NPATH = 10000
-INT = n * T
+NPATH = 100000
+INT = 1000
 bound = [0] * (INT)
 Path = [0] * NPATH
 Terminated = [0] * NPATH
 
+sigma=1/np.sqrt(1000)
 
-for i in range(INT):
+for i in range(2*INT):
     for j in range(NPATH):
         if Terminated[j] == 0:
-            Path[j] += random.normal(loc=0, scale=1)
+            Path[j] += random.normal(loc=0, scale=sigma)
 
-    find_value(i, bound, Path, Terminated)
+    find_value(i, bound, Path, Terminated,INT)
 print("0=", bound[0])
 print("1=", bound[1])
 plot_myfun(bound)
