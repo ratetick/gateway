@@ -3,6 +3,7 @@ from numpy import random
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import json 
 
 
 def cmu(t: float):
@@ -34,18 +35,21 @@ def find_value(i, bound, Path, Term,Step):
 
 NPATH = 100000
 INT = 1000
-bound = [0] * (INT)
+sec=2
+bound = [0] * (sec*INT)
 Path = [0] * NPATH
 Terminated = [0] * NPATH
 
 sigma=1/np.sqrt(1000)
 
-for i in range(2*INT):
+for i in range(sec*INT):
     for j in range(NPATH):
         if Terminated[j] == 0:
             Path[j] += random.normal(loc=0, scale=sigma)
 
     find_value(i, bound, Path, Terminated,INT)
-print("0=", bound[0])
-print("1=", bound[1])
+
+jbound=json.loads(bound)
+wfile=open("expo.json","w")
+print(json.dumps(jbound,indent=2),wfile)
 plot_myfun(bound)
