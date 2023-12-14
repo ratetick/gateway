@@ -33,10 +33,18 @@ def find_value(i, bound, Path, Term,Step):
         bound[i] = find_max(Path, Term)
 
 
+<<<<<<< HEAD
 NPATH = 100000
 INT = 1000
 sec=2
 bound = [0] * (sec*INT)
+=======
+n = 500
+T = 2
+NPATH = 100000
+INT = n * T
+bound = [0] * (INT)
+>>>>>>> f9d36847b4683c63cbd543e42f7173dfd6d60d3c
 Path = [0] * NPATH
 Terminated = [0] * NPATH
 
