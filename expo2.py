@@ -49,7 +49,6 @@ for i in range(sec*INT):
 
     find_value(i, bound, Path, Terminated,INT)
 
-jbound=json.loads(bound)
-wfile=open("expo.json","w")
-print(json.dumps(jbound,indent=2),wfile)
+wfile=open("expo.json",'w')
+wfile.write(json.dumps(bound))
 plot_myfun(bound)
