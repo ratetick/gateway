@@ -54,8 +54,11 @@ def print_list(doc, plist, stx, sty, lcolor="black"):
     str += ";\n"
     doc.append(NoEscape(str))
 
+    #     |
 
-def north_south_door(doc, x, y, wall, size, lcolor="black"):
+
+def north_south_door(doc, x, y, wall, size, lcolor="black"):  #  |  |   |
+    #     |
     v = 0.7 * size / 2
     h = wall / 2
     s = size / 2
@@ -317,6 +320,8 @@ w = [0, 0.145, 0.3, 0.4, 0.5, 0.6, 1.5]
 #    0     1    2     3    4   5    6
 w = [i * scale for i in w]
 
+TotalPages = 7
+
 
 def print_window(doc, stx, sty):
     stx = round(stx, 3)
@@ -482,7 +487,10 @@ def create_stamp(Title, PageNo, NumPages, Stage):
                 MultiColumn(size=2, align="|c|", data=""),
                 "",
                 "",
-                MultiRow(size=3, data=Title),
+                MultiRow(
+                    size=3,
+                    data=NoEscape(r"\parbox{4.5cm}{" + f"{Title}" + "}"),
+                ),
                 MultiColumn(size=3, align="|c|", data=""),
             ),
         )
@@ -698,7 +706,7 @@ if __name__ == "__main__":
     doc.append(NoEscape(r"\vfill"))
     # "Подпись"
 
-    create_stamp("Ведомость рабочих чертежей", 2, 5, "")
+    create_stamp("Ведомость рабочих чертежей", 2, TotalPages, "")
 
     doc.append(NoEscape("\pagebreak"))
     #############################################################################
@@ -880,15 +888,14 @@ if __name__ == "__main__":
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
-    # "Подпись"
 
-    create_stamp("Удаляемые перегородки и двери", 3, 5, "")
+    create_stamp("Удаляемые перегородки и двери", 3, TotalPages, "")
 
     doc.append(NoEscape("\pagebreak"))
     #############################################################################
     ######################################################################################
     ####################################################################################
-    # page 3  installed walls
+    # page 4  installed walls
     background_setup = r"angle = 0,scale = 1,vshift = -2ex,contents = {\tikz[overlay, remember picture]\draw [line width = .8pt,color = black, double = blue!10]($(current page.north west)+(1cm,-1cm)$)rectangle ($(current page.south east)+(-1,1)$);}"
     background_noescape = f"\\backgroundsetup{{{background_setup}}}"
     doc.preamble.append(NoEscape(background_noescape))
@@ -975,8 +982,11 @@ if __name__ == "__main__":
         -w[1] - S[9] + S[10] - S[10],
         "green",
     )
+    west_east_door(
+        doc, w[4] + S[24] - w[1] / 2, -(2 * w[1] + S[9] + S[12] / 2), w[1], 0.7, "green"
+    )
     ###########################################################
-    # kitchen
+    # kitchen new walls
     print_list(
         doc,
         [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[9] + S[18] / 2, 0]],
@@ -996,7 +1006,14 @@ if __name__ == "__main__":
         w[4] + S[8] + w[1] + w[3] + S[11],
         -w[1] - S[18],
     )
-
+    north_south_door(
+        doc,
+        w[4] + S[8] + w[1] + w[3] + S[11] + S[20] / 3,
+        -w[1] - 0.5 * w[1] - S[21],
+        w[1],
+        0.7,
+        "green",
+    )  # kitchen door
     #################################################
     # living room
 
@@ -1073,7 +1090,206 @@ if __name__ == "__main__":
     doc.append(NoEscape(r"\vfill"))
     # "Подпись"
 
-    create_stamp("Возводимые перегородки и двери", 4, 6, "")
+    create_stamp("Возводимые перегородки и двери", 4, TotalPages, "")
+    doc.append(NoEscape("\pagebreak"))
+    #############################################################################
+    ######################################################################################
+    ####################################################################################
+    # page 5  installed walls
+    background_setup = r"angle = 0,scale = 1,vshift = -2ex,contents = {\tikz[overlay, remember picture]\draw [line width = .8pt,color = black, double = blue!10]($(current page.north west)+(1cm,-1cm)$)rectangle ($(current page.south east)+(-1,1)$);}"
+    background_noescape = f"\\backgroundsetup{{{background_setup}}}"
+    doc.preamble.append(NoEscape(background_noescape))
+
+    doc.append(NoEscape(r"\vspace*{1cm} "))
+
+    doc.append(Command("centering"))
+
+    doc.append(Command("begin", "tikzpicture"))
+
+    print_list(
+        doc,
+        [
+            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
+            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
+            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
+            [
+                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
+                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
+            ],
+        ],
+        0,
+        0,
+    )
+
+    ###########################################################
+
+    # hallway with removed walls
+    print_list(
+        doc,
+        [
+            [-S[1] + S[2], -w[1]],
+            [-S[2], S[3]],
+            [S[4] + w[1], 0],  # S[15]-S[16]
+        ],
+        w[4],
+        -S[9] - 2 * w[1],
+    )
+
+    print_list(
+        doc,
+        [
+            [0, S[6] - w[2]],
+        ],
+        w[4] - w[1] + S[3] - S[16] + S[15],
+        -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
+    )
+    print_list(
+        doc,
+        [[0, S[24] - w[1]], [-S[12] - w[1], 2 * w[1]]],
+        w[4],
+        -S[9] - 2 * w[1],
+    )
+
+    #####################################################
+    # bathroom new walls
+    print_list(doc, [[-S[9], 0]], w[4], -w[1])
+    print_list(
+        doc,
+        [[0, S[24]], [-S[12] - w[1], 0]],
+        w[4],
+        -S[9] - w[1],
+    )
+
+    print_list(doc, [[0, -S[8] - w[1]]], w[4] + S[8] + w[1], -w[1] - S[9] + S[9])
+
+    print_list(doc, [[-S[9] + S[10], 0]], w[4] + S[8] + w[1], -w[1])
+
+    #########################################################
+    # toilet new walls
+
+    print_list(
+        doc,
+        [[S[10], -S[11]]],
+        w[4] + S[8] + w[1] + S[11],
+        -w[1] - S[9] + S[10] - S[10],
+    )
+    print_list(
+        doc,
+        [[-w[1] - S[12], 0]],
+        w[4] + S[8] + w[1] + S[11],
+        -w[1] - S[9] + S[10] - S[10],
+    )
+    west_east_door(
+        doc,
+        w[4] + S[24] - w[1] / 2,
+        -(2 * w[1] + S[9] + S[12] / 2),
+        w[1],
+        0.7,
+    )
+    ###########################################################
+    # kitchen new walls
+    print_list(
+        doc,
+        [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[9] + S[18] / 2, 0]],
+        w[4] + S[8] + w[1] + w[3] + S[11],
+        -w[1],
+    )
+    print_list(
+        doc,
+        [[0, -w[2]], [-S[12] - w[1], w[2]]],
+        w[4] + S[8] + w[1] + w[3] + S[11],
+        -w[1] - S[9],
+    )
+    print_list(
+        doc,
+        [[0, S[19]], [S[18], -S[19]]],
+        w[4] + S[8] + w[1] + w[3] + S[11],
+        -w[1] - S[18],
+    )
+    north_south_door(
+        doc,
+        w[4] + S[8] + w[1] + w[3] + S[11] + S[20] / 3,
+        -w[1] - 0.5 * w[1] - S[21],
+        w[1],
+        0.7,
+    )  # kitchen door
+    #################################################
+    # living room
+
+    print_list(
+        doc,
+        [[0, S[15] + w[1]], [S[22], -(S[16] - S[17])], [S[5] - S[22], -S[17]]],
+        w[4] + S[24] + w[1] - S[15] + S[16] - w[1],
+        -3 * w[1] - S[12] - S[9] - S[5],
+    )
+    ########################################################
+    # bedroom
+    print_list(
+        doc,
+        [[-S[13], S[14]], [S[23], -S[15]]],
+        w[3] + S[3] + w[1],
+        -4 * w[1] - S[5] - S[12] - S[9],
+    )
+
+    ########################################################
+    # balcony
+    print_list(
+        doc,
+        [
+            [
+                -S[21] * 8 / 9,
+                S[3]
+                + w[1]
+                + w[2]
+                + w[5]
+                + S[14]
+                - (w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20]),
+            ]
+        ],
+        w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20],
+        0,
+    )
+
+    ########################################################
+    # windows
+    print_window(
+        doc, w[4] + S[8] + w[1] + w[3] + S[11] + S[20], -w[1] - S[21] / 2 + w[6] / 2
+    )  # kitchen
+
+    print_window(
+        doc, w[4] + S[16] + w[1] + S[24], -2 * w[1] - S[21] - S[5] / 2 + w[6] / 2
+    )  # living room
+
+    print_window(
+        doc,
+        w[4] + S[16] + w[1] + S[24],
+        -3 * w[1] - S[21] - S[5] - S[23] / 2 + w[6] / 2,
+    )  # bedroom
+
+    ###########################################################
+    # doors
+    north_south_door(
+        doc, w[4] + S[24] + S[14] / 3 + w[1], -5 * w[1] / 2 - S[5] - S[21], w[1], 0.7
+    )  # bedroom door
+
+    north_south_door(
+        doc, w[4] + S[24] / 2, -2 * w[1] - S[1] - S[9] - w[3] / 2, w[3], 0.8
+    )  # entrance door
+
+    ##################################################
+
+    bathtab(doc, w[4] + w[1], -2 * w[1], 0.75, 1.1)
+    faucet(doc, S[8] / 2 + w[4], -1.5 * w[1], 0.6, 0.6)
+    faucet(doc, S[13] + S[20] / 4 + w[4], -1.5 * w[1], 0.6, 0.6)
+    toilet(doc, S[8] + S[11] / 3 + w[4] + w[1], -w[1] - S[9] + S[10], 0.55, 0.65)
+    cooktop(doc, S[13] + S[20] * 2 / 3 + w[4], -1.5 * w[1], 0.6, 0.6)
+
+    doc.append(Command("end", "tikzpicture"))
+
+    doc.append(NoEscape(r"\vfill"))
+    # "Подпись"
+
+    create_stamp("План помещения квартиры после перепланировки", 5, TotalPages, "")
 
 
 doc.generate_pdf("ml", clean_tex=False)
