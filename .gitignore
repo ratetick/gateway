@@ -1,4 +1,3 @@
-*pdf
 *tex
 *log
 *aux
@@ -6,3 +5,4 @@
 *fls
 *fdb_latexmk
 *json
+.gitignore

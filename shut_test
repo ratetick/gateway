@@ -1,2 +1,0 @@
-pidwait -e -f "shut_test.py"
-echo "shutting down here"
