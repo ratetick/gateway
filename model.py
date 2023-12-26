@@ -17,11 +17,9 @@ from pylatex import (
     MultiColumn,
     MultiRow,
 )
-from pylatex.utils import italic
-import os
 
 
-### functions
+# region functions
 def print_latex(doc, V, H, stx, sty):
     zipset = zip(H, V)
     stx = round(stx, 3)
@@ -285,6 +283,28 @@ def measurements(
         # )
 
 
+def print_window(doc, stx, sty):
+    stx = round(stx, 3)
+    sty = round(sty, 3)
+    doc.append(NoEscape(f"\draw[very thick] {stx,sty}"))
+    stx1 = stx + w[4]
+    stx1 = round(stx1, 3)
+    doc.append(NoEscape(f"--{stx1,sty};"))
+    sty1 = sty - w[6]
+    sty1 = round(sty1, 3)
+    doc.append(NoEscape(f"\draw[very thick] {stx,sty1}"))
+    doc.append(NoEscape(f"--{stx1,sty1};"))
+    stx2 = stx + w[4] / 2 - w[1] / 2
+    stx3 = stx + w[4] / 2 + w[1] / 2
+    stx2 = round(stx2, 3)
+    stx3 = round(stx3, 3)
+    doc.append(NoEscape(f"\draw[very thick] {stx2,sty}--{stx2,sty1};"))
+    doc.append(NoEscape(f"\draw[very thick] {stx3,sty}--{stx3,sty1};"))
+
+
+# endregion
+
+# region values
 scale = 1.3
 
 S = [
@@ -321,27 +341,12 @@ w = [0, 0.145, 0.3, 0.4, 0.5, 0.6, 1.5]
 w = [i * scale for i in w]
 
 TotalPages = 7
+PageCount = 0
+
+# endregion
 
 
-def print_window(doc, stx, sty):
-    stx = round(stx, 3)
-    sty = round(sty, 3)
-    doc.append(NoEscape(f"\draw[very thick] {stx,sty}"))
-    stx1 = stx + w[4]
-    stx1 = round(stx1, 3)
-    doc.append(NoEscape(f"--{stx1,sty};"))
-    sty1 = sty - w[6]
-    sty1 = round(sty1, 3)
-    doc.append(NoEscape(f"\draw[very thick] {stx,sty1}"))
-    doc.append(NoEscape(f"--{stx1,sty1};"))
-    stx2 = stx + w[4] / 2 - w[1] / 2
-    stx3 = stx + w[4] / 2 + w[1] / 2
-    stx2 = round(stx2, 3)
-    stx3 = round(stx3, 3)
-    doc.append(NoEscape(f"\draw[very thick] {stx2,sty}--{stx2,sty1};"))
-    doc.append(NoEscape(f"\draw[very thick] {stx3,sty}--{stx3,sty1};"))
-
-
+# region stamp
 def create_stamp(Title, PageNo, NumPages, Stage):
     with doc.create(
         Tabular(
@@ -520,6 +525,8 @@ def create_stamp(Title, PageNo, NumPages, Stage):
         table.add_hline()
 
 
+# endregion
+
 if __name__ == "__main__":
     geometry_options = {
         "tmargin": "1.5cm",
@@ -534,18 +541,41 @@ if __name__ == "__main__":
     )
     doc.preamble.append(Command("usepackage", "tikz"))
     doc.preamble.append(Command("usepackage", "background"))
-    doc.preamble.append(Command("usetikzlibrary", "calc"))  # \usetikzlibrary{calc}
-    doc.preamble.append(Command("usepackage", options="russian", arguments="babel"))
+    doc.preamble.append(Command("usetikzlibrary", "calc"))
 
+    # doc.preamble.append(NoEscape("%Enable Source Line Numbers\n"))
+    # doc.preamble.append(NoEscape("%\\usepackage{lineno}\n"))
+    # doc.preamble.append(NoEscape("%\\linenumbers\n"))
+
+    doc.preamble.append(Command("usepackage", options="russian", arguments="babel"))
     background_setup = r"angle = 0,scale = 1,vshift = -2ex,contents = {\tikz[overlay, remember picture]\draw [line width = .8pt,color = black, double = blue!10]($(current page.north west)+(1cm,-1cm)$)rectangle ($(current page.south east)+(-1,1)$);}"
     background_noescape = f"\\backgroundsetup{{{background_setup}}}"
     doc.preamble.append(NoEscape(background_noescape))
-    doc.append(Command("centering"))
+
+    # region page 1 content
+
+    with doc.create(Tabular("|p{3.1cm}|p{12.05cm}|p{3.1cm}|", row_height=1.5)) as table:
+        table.add_hline()
+        table.add_row(
+            (MultiColumn(size=3, align="|c|", data="Ведомость рабочих чертежей"),)
+        )
+        table.add_hline()
+        table.add_row("N", "ЕЕЕЕЕЕЕЕ", "Note")
+        table.add_hline()
+    doc.append(NoEscape(r"\vfill"))
+
+    PageCount += 1
+    create_stamp("Ведомость рабочих чертежей", PageCount, TotalPages, "")
+
+    doc.append(NoEscape("\pagebreak"))
+    # endregion
+    ###################################################################################
+    # region page 2 original plan
+    doc.append(NoEscape(r"\vspace*{1cm} "))
+    doc.append(Command("centering "))
     doc.append(Command("begin", "tikzpicture"))
 
-    #####################################################################
-    # perimeter
-
+    #  region perimeter
     print_list(
         doc,
         [
@@ -560,7 +590,7 @@ if __name__ == "__main__":
         0,
         0,
     )
-
+    # endregion
     measurements(
         doc,
         "hor_top",
@@ -704,18 +734,14 @@ if __name__ == "__main__":
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
-    # "Подпись"
 
-    create_stamp("Ведомость рабочих чертежей", 2, TotalPages, "")
+    PageCount += 1
+    create_stamp("Ведомость рабочих чертежей", PageCount, TotalPages, "")
 
     doc.append(NoEscape("\pagebreak"))
-    #############################################################################
-    ######################################################################################
+    # endregion
     ####################################################################################
-    # page 2  removed walls
-    background_setup = r"angle = 0,scale = 1,vshift = -2ex,contents = {\tikz[overlay, remember picture]\draw [line width = .8pt,color = black, double = blue!10]($(current page.north west)+(1cm,-1cm)$)rectangle ($(current page.south east)+(-1,1)$);}"
-    background_noescape = f"\\backgroundsetup{{{background_setup}}}"
-    doc.preamble.append(NoEscape(background_noescape))
+    # region page 3 removed walls
 
     doc.append(NoEscape(r"\vspace*{1cm} "))
 
@@ -892,14 +918,9 @@ if __name__ == "__main__":
     create_stamp("Удаляемые перегородки и двери", 3, TotalPages, "")
 
     doc.append(NoEscape("\pagebreak"))
-    #############################################################################
-    ######################################################################################
+    # endregion
     ####################################################################################
-    # page 4  installed walls
-    background_setup = r"angle = 0,scale = 1,vshift = -2ex,contents = {\tikz[overlay, remember picture]\draw [line width = .8pt,color = black, double = blue!10]($(current page.north west)+(1cm,-1cm)$)rectangle ($(current page.south east)+(-1,1)$);}"
-    background_noescape = f"\\backgroundsetup{{{background_setup}}}"
-    doc.preamble.append(NoEscape(background_noescape))
-
+    # region page 4 installed walls
     doc.append(NoEscape(r"\vspace*{1cm} "))
 
     doc.append(Command("centering"))
@@ -1092,14 +1113,9 @@ if __name__ == "__main__":
 
     create_stamp("Возводимые перегородки и двери", 4, TotalPages, "")
     doc.append(NoEscape("\pagebreak"))
-    #############################################################################
-    ######################################################################################
+    # endregion
     ####################################################################################
-    # page 5  installed walls
-    background_setup = r"angle = 0,scale = 1,vshift = -2ex,contents = {\tikz[overlay, remember picture]\draw [line width = .8pt,color = black, double = blue!10]($(current page.north west)+(1cm,-1cm)$)rectangle ($(current page.south east)+(-1,1)$);}"
-    background_noescape = f"\\backgroundsetup{{{background_setup}}}"
-    doc.preamble.append(NoEscape(background_noescape))
-
+    # region page 5 final plan
     doc.append(NoEscape(r"\vspace*{1cm} "))
 
     doc.append(Command("centering"))
@@ -1291,6 +1307,7 @@ if __name__ == "__main__":
 
     create_stamp("План помещения квартиры после перепланировки", 5, TotalPages, "")
 
+# endregion
 
 doc.generate_pdf("ml", clean_tex=False)
 
