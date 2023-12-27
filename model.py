@@ -16,6 +16,7 @@ from pylatex import (
     Command,
     MultiColumn,
     MultiRow,
+    Math,
 )
 
 
@@ -35,6 +36,41 @@ def print_latex(doc, V, H, stx, sty):
 
     str += ";\n"
     doc.append(NoEscape(str))
+
+
+def draw_cement(x_start, y_start, length, width, density_width, density_length):
+    ret = r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
+    rt_len = length / density_length
+    rt_width = width / (density_width + 1)
+    for j in range(density_width):
+        for i in range(density_length):
+            ret += (
+                r"\filldraw "
+                + f"({x_start+i*rt_len+((j+1)%2)*rt_len/2},{y_start-(j+1)*rt_width}) circle(1pt);"
+            )
+    return ret
+
+
+def draw_concrete(x_start, y_start, length, density):
+    ret = r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
+    rt = length / density
+    for i in range(density):
+        ret += (
+            r"\draw "
+            + f"({x_start+(i+1)*rt},{y_start})--({x_start+i*rt},{y_start-rt});"
+        )
+    return ret
+
+
+def draw_shumanet(x_start, y_start, length, width, density):
+    ret = r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
+    rt = width / (density + 1)
+    for i in range(density):
+        ret += (
+            r"\draw[thick] "
+            + f"({x_start},{y_start-rt*(i+1)})--({x_start+length},{y_start-rt*(i+1)});"
+        )
+    return ret
 
 
 def print_list(doc, plist, stx, sty, lcolor="black"):
@@ -914,8 +950,8 @@ if __name__ == "__main__":
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
-
-    create_stamp("Удаляемые перегородки и двери", 3, TotalPages, "")
+    PageCount += 1
+    create_stamp("Удаляемые перегородки и двери", PageCount, TotalPages, "")
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
@@ -1109,9 +1145,9 @@ if __name__ == "__main__":
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
-    # "Подпись"
 
-    create_stamp("Возводимые перегородки и двери", 4, TotalPages, "")
+    PageCount += 1
+    create_stamp("Возводимые перегородки и двери", PageCount, TotalPages, "")
     doc.append(NoEscape("\pagebreak"))
     # endregion
     ####################################################################################
@@ -1303,12 +1339,66 @@ if __name__ == "__main__":
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
-    # "Подпись"
 
-    create_stamp("План помещения квартиры после перепланировки", 5, TotalPages, "")
+    PageCount += 1
+    create_stamp(
+        "План помещения квартиры после перепланировки", PageCount, TotalPages, ""
+    )
+    doc.append(NoEscape("\pagebreak"))
+    # endregion
+    #####################################################################################
+    # region page 6 Floors structure
 
+    doc.append(NoEscape(r"\vspace*{1cm} "))
+    # with doc.create(Section("Экспикация полов в помеще", numbered=False)):
+    #    doc.append("")
+    doc.append(NoEscape(r"\section*{\bf Экспикация полов в помеще}"))
+    doc.append(NoEscape(r"\vspace*{1cm} "))
+
+    with doc.create(
+        Tabular("|p{2cm}|p{1.5cm}|p{4.8cm}|p{6.7cm}|p{2cm}|", row_height=2)
+    ) as table:
+        table.add_hline()
+        table.add_row(
+            "помещ", "Тип", "Схема пола", "Данные элемеетов пола", "Площадь,м²"
+        )
+        table.add_hline()
+        table.add_row(
+            MultiRow(6, data=" "),
+            MultiRow(6, data=" "),
+            MultiRow(
+                6,
+                data=NoEscape(
+                    r"\begin{tikzpicture}"
+                    + draw_cement(0.2, 0, 4.5, 0.8, 3, 20)
+                    + draw_shumanet(0.2, -0.8, 4.5, 0.1, 2)
+                    + draw_concrete(0.2, -0.9, 4.5, 20)
+                    + r"\end{tikzpicture}"
+                ),
+            ),
+            MultiRow(
+                6,
+                data=NoEscape(
+                    r"\parbox{6.5cm}{"
+                    + r"1.керамическая плитка $delta$=15мм"
+                    + "\\newline"
+                    + "2.Ценентно-песчанная стяжка, армированная сеткой.\$delta\$=50мм"
+                    + "}"
+                ),
+            ),
+            MultiRow(6, data="7.0 "),
+        )
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+        table.add_hline()
+    doc.append(NoEscape(r"\vfill"))
+    PageCount += 1
+    create_stamp("Экспикация полов в помеще", PageCount, TotalPages, "")
+    doc.append(NoEscape("\pagebreak"))
 # endregion
-
 doc.generate_pdf("ml", clean_tex=False)
 
 
