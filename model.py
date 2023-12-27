@@ -1352,15 +1352,15 @@ if __name__ == "__main__":
     doc.append(NoEscape(r"\vspace*{1cm} "))
     # with doc.create(Section("Экспикация полов в помеще", numbered=False)):
     #    doc.append("")
-    doc.append(NoEscape(r"\section*{\bf Экспикация полов в помеще}"))
+    doc.append(NoEscape(r"\section*{\bf Экспликация полов в помещении}"))
     doc.append(NoEscape(r"\vspace*{1cm} "))
-
+    doc.append(NoEscape(r"\hyphenation{ар-ми-ро-ван-ная}"))
     with doc.create(
         Tabular("|p{2cm}|p{1.5cm}|p{4.8cm}|p{6.7cm}|p{2cm}|", row_height=2)
     ) as table:
         table.add_hline()
         table.add_row(
-            "помещ", "Тип", "Схема пола", "Данные элемеетов пола", "Площадь,м²"
+            "помещ", "Тип", "Схема пола", "Данные элементов пола", "Площадь,м²"
         )
         table.add_hline()
         table.add_row(
@@ -1380,9 +1380,11 @@ if __name__ == "__main__":
                 6,
                 data=NoEscape(
                     r"\parbox{6.5cm}{"
-                    + r"1.керамическая плитка $delta$=15мм"
+                    + r"1. Керамическая плитка $\delta$=15мм"
                     + "\\newline"
-                    + "2.Ценентно-песчанная стяжка, армированная сеткой.\$delta\$=50мм"
+                    + r"2. Ценентно-песчанная стяжка, армированная сеткой. $\delta$=50мм"
+		    + "\\newline"
+		    + r"3. Существующее ж/б перекрытие."
                     + "}"
                 ),
             ),
