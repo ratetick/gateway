@@ -38,6 +38,28 @@ def print_latex(doc, V, H, stx, sty):
     doc.append(NoEscape(str))
 
 
+def draw_line(x_start, y_start, length):
+    return r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
+
+
+def draw_tar(x_start, y_start, length, width):
+    return (
+        r"\filldraw "
+        + f"({x_start},{y_start}) rectangle({x_start+length},{y_start-width});"
+    )
+
+
+def draw_tile(x_start, y_start, length, width, density):
+    ret = draw_line(x_start, y_start, length)
+    # ret = r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
+    rt = length / (density)
+    for i in range(density + 1):
+        ret += (
+            r"\draw " + f"({x_start+i*rt},{y_start})--({x_start+i*rt},{y_start-width});"
+        )
+    return ret
+
+
 def draw_cement(x_start, y_start, length, width, density_width, density_length):
     ret = r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
     rt_len = length / density_length
@@ -132,6 +154,19 @@ def west_east_door(doc, x, y, wall, size, lcolor="black"):
     doc.append(
         NoEscape(
             f"\draw[very thick][color={lcolor}] {round(x+h,3),round(y+s,3)}--{round(x-h,3),round(y+s,3)};"
+        )
+    )
+
+
+def shower(doc, x, y, width, length):
+    doc.append(
+        NoEscape(
+            f"\draw[very thick]({round(x,3)},{round(y,3)}) rectangle ({round(x+length,3)},{round(y-width,3)}) ;"
+        )
+    )
+    doc.append(
+        NoEscape(
+            f"\draw[very thick]({round(x+.2*length,3)},{round(y-.2*width,3)}) circle (2pt);"
         )
     )
 
@@ -1175,7 +1210,7 @@ if __name__ == "__main__":
 
     ###########################################################
 
-    # hallway with removed walls
+    # hallway
     print_list(
         doc,
         [
@@ -1203,7 +1238,7 @@ if __name__ == "__main__":
     )
 
     #####################################################
-    # bathroom new walls
+    # bathroom
     print_list(doc, [[-S[9], 0]], w[4], -w[1])
     print_list(
         doc,
@@ -1217,7 +1252,7 @@ if __name__ == "__main__":
     print_list(doc, [[-S[9] + S[10], 0]], w[4] + S[8] + w[1], -w[1])
 
     #########################################################
-    # toilet new walls
+    # toilet
 
     print_list(
         doc,
@@ -1239,7 +1274,7 @@ if __name__ == "__main__":
         0.7,
     )
     ###########################################################
-    # kitchen new walls
+    # kitchen n
     print_list(
         doc,
         [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[9] + S[18] / 2, 0]],
@@ -1360,19 +1395,22 @@ if __name__ == "__main__":
     ) as table:
         table.add_hline()
         table.add_row(
-            "помещ", "Тип", "Схема пола", "Данные элементов пола", "Площадь,м²"
+            "№ помещ.", "Тип", "Схема пола", "Данные элементов пола", "Площадь,м²"
         )
         table.add_hline()
+
         table.add_row(
             MultiRow(6, data=" "),
-            MultiRow(6, data=" "),
+            MultiRow(6, data="I"),
             MultiRow(
                 6,
                 data=NoEscape(
                     r"\begin{tikzpicture}"
+                    + draw_tile(0.2, 0.2, 4.5, 0.2, 5)
                     + draw_cement(0.2, 0, 4.5, 0.8, 3, 20)
-                    + draw_shumanet(0.2, -0.8, 4.5, 0.1, 2)
-                    + draw_concrete(0.2, -0.9, 4.5, 20)
+                    + draw_tar(0.2, -0.8, 4.5, 0.1)
+                    + draw_shumanet(0.2, -0.9, 4.5, 0.1, 2)
+                    + draw_concrete(0.2, -1.0, 4.5, 20)
                     + r"\end{tikzpicture}"
                 ),
             ),
@@ -1383,13 +1421,63 @@ if __name__ == "__main__":
                     + r"1. Керамическая плитка $\delta$=15мм"
                     + "\\newline"
                     + r"2. Ценентно-песчанная стяжка, армированная сеткой. $\delta$=50мм"
-		    + "\\newline"
-		    + r"3. Существующее ж/б перекрытие."
+                    + "\\newline"
+                    + r"3. Гидроизоляция - 2 слоя гидроизола на битумноЙ мастике. $\delta$=5мм"
+                    + "\\newline"
+                    + r"4. Звукоизоляция - Шуманет 100. $\delta$=5мм"
+                    + "\\newline"
+                    + r"5. Экструдированный пенополистирол. $\delta$=70мм"
+                    + "\\newline"
+                    + r"6. Существующее ж/б перекрытие."
                     + "}"
                 ),
             ),
             MultiRow(6, data="7.0 "),
         )
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+        table.add_row("", "", "", "", "")
+
+        table.add_hline()
+
+        table.add_row(
+            MultiRow(6, data=" "),
+            MultiRow(6, data="II"),
+            MultiRow(
+                6,
+                data=NoEscape(
+                    r"\begin{tikzpicture}"
+                    + draw_tile(0.2, 0.2, 4.5, 0.2, 5)
+                    + draw_cement(0.2, 0, 4.5, 0.8, 3, 20)
+                    + draw_tar(0.2, -0.8, 4.5, 0.1)
+                    + draw_shumanet(0.2, -0.9, 4.5, 0.1, 2)
+                    + draw_concrete(0.2, -1.0, 4.5, 20)
+                    + r"\end{tikzpicture}"
+                ),
+            ),
+            MultiRow(
+                6,
+                data=NoEscape(
+                    r"\parbox{6.5cm}{"
+                    + r"1. Керамическая плитка $\delta$=15мм"
+                    + "\\newline"
+                    + r"2. Ценентно-песчанная стяжка, армированная сеткой. $\delta$=50мм"
+                    + "\\newline"
+                    + r"3. Гидроизоляция - 2 слоя гидроизола на битумноЙ мастике. $\delta$=5мм"
+                    + "\\newline"
+                    + r"4. Звукоизоляция - Шуманет 100. $\delta$=5мм"
+                    + "\\newline"
+                    + r"5. Экструдированный пенополистирол. $\delta$=70мм"
+                    + "\\newline"
+                    + r"6. Существующее ж/б перекрытие."
+                    + "}"
+                ),
+            ),
+            MultiRow(6, data="7.0 "),
+        )
+
         table.add_row("", "", "", "", "")
         table.add_row("", "", "", "", "")
         table.add_row("", "", "", "", "")
