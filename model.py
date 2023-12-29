@@ -565,7 +565,7 @@ def create_stamp(Title, PageNo, NumPages, Stage):
                 "",
                 MultiRow(
                     size=3,
-                    data=NoEscape(r"\parbox{4.5cm}{" + f"{Title}" + "}"),
+                    data=NoEscape(r"\parbox{5.5cm}{" + f"{Title}" + "}"),
                 ),
                 MultiColumn(size=3, align="|c|", data=""),
             ),
@@ -623,15 +623,39 @@ if __name__ == "__main__":
     background_noescape = f"\\backgroundsetup{{{background_setup}}}"
     doc.preamble.append(NoEscape(background_noescape))
 
-    # region page 1 content
+    # region page 0 content
+    doc.append(NoEscape(r"\vspace*{1cm} "))
+    doc.append(Command("centering "))
 
-    with doc.create(Tabular("|p{3.1cm}|p{12.05cm}|p{3.1cm}|", row_height=1.5)) as table:
+    with doc.create(Tabular("|p{3.1cm}|p{12.05cm}|p{3.1cm}|", row_height=3)) as table:
         table.add_hline()
         table.add_row(
             (MultiColumn(size=3, align="|c|", data="Ведомость рабочих чертежей"),)
         )
         table.add_hline()
-        table.add_row("N", "ЕЕЕЕЕЕЕЕ", "Note")
+        table.add_row("№", "Наименованние", "Прим.")
+        table.add_hline()
+        table.add_row("1", "Схема расположения объекта в г. Москва", "")
+        table.add_hline()
+        table.add_row("2", "План помещений квартиры до перепланировки", "")
+        table.add_hline()
+        table.add_row(
+            "3",
+            "План демонтажа оборудования и строительных конструкций в помещениях квартиры",
+            "",
+        )
+        table.add_hline()
+        table.add_row(
+            "4",
+            "План возводимого оборудования и строительных конструкций в помещениях квартиры",
+            "",
+        )
+        table.add_hline()
+        table.add_row("5", "План помещения квартиры после перепланировки", "")
+        table.add_hline()
+        table.add_row("6", "Экспикация полов в помещениях квартиры", "")
+        table.add_hline()
+        table.add_row("7", "", "")
         table.add_hline()
     doc.append(NoEscape(r"\vfill"))
 
@@ -639,6 +663,26 @@ if __name__ == "__main__":
     create_stamp("Ведомость рабочих чертежей", PageCount, TotalPages, "")
 
     doc.append(NoEscape("\pagebreak"))
+
+    # endregion
+    # region page 1 content
+    doc.append(NoEscape(r"\vspace*{.5cm} "))
+    doc.append(Command("centering "))
+    doc.append(NoEscape(r"\section*{\bf Схема расположения объекта в г. Москва}"))
+    doc.append(NoEscape(r"\vspace*{.2cm} "))
+
+    with doc.create(Figure(position="htbp")) as fig:
+        fig.add_image(
+            "/home/vlad/gateway/122166map.jpg", width=NoEscape(r".6\linewidth")
+        )
+        # fig.add_caption("Your Image Caption")
+    doc.append(NoEscape(r"\vfill"))
+
+    PageCount += 1
+    create_stamp("Схема расположения объекта в г. Москва", PageCount, TotalPages, "")
+
+    doc.append(NoEscape("\pagebreak"))
+
     # endregion
     ###################################################################################
     # region page 2 original plan
@@ -807,7 +851,7 @@ if __name__ == "__main__":
     doc.append(NoEscape(r"\vfill"))
 
     PageCount += 1
-    create_stamp("Ведомость рабочих чертежей", PageCount, TotalPages, "")
+    create_stamp("План помещений квартиры до перепланировки", PageCount, TotalPages, "")
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
@@ -986,7 +1030,12 @@ if __name__ == "__main__":
 
     doc.append(NoEscape(r"\vfill"))
     PageCount += 1
-    create_stamp("Удаляемые перегородки и двери", PageCount, TotalPages, "")
+    create_stamp(
+        "План демонтажа оборудования и строительных конструкций в помещениях квартиры",
+        PageCount,
+        TotalPages,
+        "",
+    )
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
@@ -1182,7 +1231,12 @@ if __name__ == "__main__":
     doc.append(NoEscape(r"\vfill"))
 
     PageCount += 1
-    create_stamp("Возводимые перегородки и двери", PageCount, TotalPages, "")
+    create_stamp(
+        "План возводимого оборудования и строительных конструкций в помещениях квартиры",
+        PageCount,
+        TotalPages,
+        "",
+    )
     doc.append(NoEscape("\pagebreak"))
     # endregion
     ####################################################################################
@@ -1486,7 +1540,7 @@ if __name__ == "__main__":
         table.add_hline()
     doc.append(NoEscape(r"\vfill"))
     PageCount += 1
-    create_stamp("Экспикация полов в помеще", PageCount, TotalPages, "")
+    create_stamp("Экспикация полов в помещениях квартиры", PageCount, TotalPages, "")
     doc.append(NoEscape("\pagebreak"))
 # endregion
 doc.generate_pdf("ml", clean_tex=False)
