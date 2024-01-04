@@ -673,7 +673,7 @@ if __name__ == "__main__":
 
     with doc.create(Figure(position="htbp")) as fig:
         fig.add_image(
-            "/home/vlad/gateway/122166map.jpg", width=NoEscape(r".6\linewidth")
+            "122166map.jpg", width=NoEscape(r".6\linewidth")
         )
         # fig.add_caption("Your Image Caption")
     doc.append(NoEscape(r"\vfill"))
