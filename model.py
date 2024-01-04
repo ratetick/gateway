@@ -684,7 +684,6 @@ if __name__ == "__main__":
     doc.append(NoEscape("\pagebreak"))
 
     # endregion
-    ###################################################################################
     # region page 2 original plan
     doc.append(NoEscape(r"\vspace*{1cm} "))
     doc.append(Command("centering "))
@@ -719,6 +718,10 @@ if __name__ == "__main__":
         ),
     )
 
+    measurements(
+        doc,
+        "vert_right",
+    )
     measurements(
         doc,
         "vert_left",
@@ -855,7 +858,6 @@ if __name__ == "__main__":
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
-    ####################################################################################
     # region page 3 removed walls
 
     doc.append(NoEscape(r"\vspace*{1cm} "))
@@ -1039,7 +1041,6 @@ if __name__ == "__main__":
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
-    ####################################################################################
     # region page 4 installed walls
     doc.append(NoEscape(r"\vspace*{1cm} "))
 
@@ -1238,8 +1239,7 @@ if __name__ == "__main__":
         "",
     )
     doc.append(NoEscape("\pagebreak"))
-    # endregion
-    ####################################################################################
+    # endregion  
     # region page 5 final plan
     doc.append(NoEscape(r"\vspace*{1cm} "))
 
@@ -1435,7 +1435,6 @@ if __name__ == "__main__":
     )
     doc.append(NoEscape("\pagebreak"))
     # endregion
-    #####################################################################################
     # region page 6 Floors structure
 
     doc.append(NoEscape(r"\vspace*{1cm} "))
