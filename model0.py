@@ -38,11 +38,6 @@ def print_latex(doc, V, H, stx, sty):
     doc.append(NoEscape(str))
 
 
-def draw_vector(doc, x_start, y_start, x_end, y_end):
-    vector_to_draw = r"\draw " + f"({x_start},{y_start})--({x_end},{y_end});"
-    doc.append(NoEscape(vector_to_draw))
-
-
 def draw_line(x_start, y_start, length):
     return r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
 
@@ -409,31 +404,12 @@ S = [
     3.36,  # 22
     3.16,  # 23
     1.16,  # 24
-    0.8,  # 25 door size not on original plan
-    1,  # 26 bathroom wall size
-    0,  # 27 bathroom coordinate
-    0,  # 28 bathroom angle wall
 ]
-w = [0, 0.17, 0.3, 0.4, 0.5, 0.6, 1.5, 0.07]
-# angle wall calculations
-sin_alpha = S[25] / (S[24] + w[1] + S[6])
-cos_alpha = np.cos(np.arcsin(sin_alpha))
-S[28] = (S[24] + w[1] + S[6]) / cos_alpha
-S[27] = S[25] / cos_alpha  # angle wall down distance
-
 S = [i * scale for i in S]
 
-
+w = [0, 0.145, 0.3, 0.4, 0.5, 0.6, 1.5]
 #    0     1    2     3    4   5    6
 w = [i * scale for i in w]
-A = [
-    [
-        w[4] + S[24] + S[6],
-        -w[1] - S[9] - w[1] - S[12],  # south east coner hollway
-    ],
-    [w[4] + S[8] + w[1] + S[11], -w[1] - S[9]],  # south east coner bathroom
-]
-
 
 TotalPages = 7
 PageCount = 0
@@ -696,7 +672,9 @@ if __name__ == "__main__":
     doc.append(NoEscape(r"\vspace*{.2cm} "))
 
     with doc.create(Figure(position="htbp")) as fig:
-        fig.add_image("122166map.jpg", width=NoEscape(r".6\linewidth"))
+        fig.add_image(
+            "/home/vlad/gateway/122166map.jpg", width=NoEscape(r".6\linewidth")
+        )
         # fig.add_caption("Your Image Caption")
     doc.append(NoEscape(r"\vfill"))
 
@@ -1290,46 +1268,37 @@ if __name__ == "__main__":
     print_list(
         doc,
         [
-            [-S[1] + S[2] + S[12], -w[1]],
+            [-S[1] + S[2], -w[1]],
             [-S[2], S[3]],
             [S[4] + w[1], 0],  # S[15]-S[16]
         ],
         w[4],
-        -S[9] - S[12] - 2 * w[1],
+        -S[9] - 2 * w[1],
     )
 
-    # print_list(
-    #    doc,
-    #    [
-    #        [0, S[6] - w[2]],
-    #    ],
-    #    w[4] - w[1] + S[3] - S[16] + S[15],
-    #    -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
-    # )
     print_list(
         doc,
-        [[0, S[24] - w[1]], [w[1], 0]],
+        [
+            [0, S[6] - w[2]],
+        ],
+        w[4] - w[1] + S[3] - S[16] + S[15],
+        -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
+    )
+    print_list(
+        doc,
+        [[0, S[24] - w[1]], [-S[12] - w[1], 2 * w[1]]],
         w[4],
-        -S[9] - S[12] - 3 * w[1],
+        -S[9] - 2 * w[1],
     )
 
     #####################################################
     # bathroom
-    draw_vector(doc, A[0][0] - w[2], A[0][1], w[4] + S[26], A[0][1] - S[27])
-    draw_vector(
-        doc,
-        S[26] + w[4],
-        -w[1] - S[9] - w[1] - S[12],
-        S[26] + w[4] + S[25] * sin_alpha,
-        -w[1] - S[9] - w[1] - S[12] - S[25] * cos_alpha,
-    )
-    print_list(doc, [[-S[9] - w[1] - S[12], 0]], w[4], -w[1])
+    print_list(doc, [[-S[9], 0]], w[4], -w[1])
     print_list(
         doc,
-        # [[0, S[24]], [-S[12] - w[1], 0]],
-        [[0, S[26]]],
+        [[0, S[24]], [-S[12] - w[1], 0]],
         w[4],
-        -S[9] - w[1] - S[12] - w[1],
+        -S[9] - w[1],
     )
 
     print_list(doc, [[0, -S[8] - w[1]]], w[4] + S[8] + w[1], -w[1] - S[9] + S[9])
@@ -1351,9 +1320,15 @@ if __name__ == "__main__":
         w[4] + S[8] + w[1] + S[11],
         -w[1] - S[9] + S[10] - S[10],
     )
-
+    west_east_door(
+        doc,
+        w[4] + S[24] - w[1] / 2,
+        -(2 * w[1] + S[9] + S[12] / 2),
+        w[1],
+        0.7,
+    )
     ###########################################################
-    # kitchen
+    # kitchen n
     print_list(
         doc,
         [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[9] + S[18] / 2, 0]],
@@ -1381,16 +1356,10 @@ if __name__ == "__main__":
     )  # kitchen door
     #################################################
     # living room
-    draw_vector(
-        doc, A[0][0] - w[2], A[0][1] - w[1], w[4] + S[26], A[0][1] - S[27] - w[1]
-    )
+
     print_list(
         doc,
-        [
-            [0, S[15] + w[1]],
-            [S[22], -(S[16] - S[17])],
-            [S[5] - S[22], -S[20] - w[2] - w[1] - w[7]],
-        ],
+        [[0, S[15] + w[1]], [S[22], -(S[16] - S[17])], [S[5] - S[22], -S[17]]],
         w[4] + S[24] + w[1] - S[15] + S[16] - w[1],
         -3 * w[1] - S[12] - S[9] - S[5],
     )
