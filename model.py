@@ -21,6 +21,14 @@ from pylatex import (
 
 
 # region functions
+def get_header():
+    doc.append(NoEscape(r"\vspace*{.5cm} "))
+
+    doc.append(Command("centering"))
+
+    doc.append(Command("begin", "tikzpicture"))
+
+
 def print_latex(doc, V, H, stx, sty):
     zipset = zip(H, V)
     stx = round(stx, 3)
@@ -38,13 +46,60 @@ def print_latex(doc, V, H, stx, sty):
     doc.append(NoEscape(str))
 
 
-def draw_vector(doc, x_start, y_start, x_end, y_end):
-    vector_to_draw = r"\draw " + f"({x_start},{y_start})--({x_end},{y_end});"
+def draw_perimeter():
+    cur_vector = draw_vector_vector(
+        doc, 0, 0, 0, -(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4])
+    )
+    cur_vector = draw_vector_vector(doc, *cur_vector, w[4], 0)
+    cur_vector = draw_vector_vector(doc, *cur_vector, 0, S[13] - S[4] - w[3] + w[4])
+    cur_vector = draw_vector_vector(
+        doc, *cur_vector, S[3] + w[1] - w[3] + w[3] - w[4], 0
+    )
+    cur_vector = draw_vector_vector(doc, *cur_vector, 0, -(S[13] - S[4] - w[3] + w[4]))
+    cur_vector = draw_vector_vector(doc, *cur_vector, w[3] + S[14] + w[4], 0)
+    cur_vector = draw_vector_vector(
+        doc, *cur_vector, 0, S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]
+    )
+    cur_vector = draw_vector_vector(
+        doc,
+        *cur_vector,
+        -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
+        0,
+    )
+
+
+def draw_vector(doc, x_start, y_start, x_end, y_end, lcolor="black"):
+    x_start = round(x_start, 3)
+    y_start = round(y_start, 3)
+    x_end = round(x_end, 3)
+    y_end = round(y_end, 3)
+
+    vector_to_draw = (
+        f"\draw[very thick][color={lcolor}]"
+        + f"({x_start},{y_start})--({x_end},{y_end});"
+    )
     doc.append(NoEscape(vector_to_draw))
+    return [x_end, y_end]
+
+
+def draw_vector_vector(doc, x_start, y_start, x, y, lcolor="black"):
+    x_start = round(x_start, 3)
+    y_start = round(y_start, 3)
+    x = round(x, 3)
+    y = round(y, 3)
+
+    vector_to_draw = (
+        f"\draw[very thick][color={lcolor}]"
+        + f"({x_start},{y_start})--({x_start+x},{y_start+y});"
+    )
+    doc.append(NoEscape(vector_to_draw))
+    return [x_start + x, y_start + y]
 
 
 def draw_line(x_start, y_start, length):
-    return r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
+    return (
+        r"\draw[very thick] " + f"({x_start},{y_start})--({x_start+length},{y_start});"
+    )
 
 
 def draw_tar(x_start, y_start, length, width):
@@ -416,9 +471,9 @@ S = [
 ]
 w = [0, 0.17, 0.3, 0.4, 0.5, 0.6, 1.5, 0.07]
 # angle wall calculations
-sin_alpha = S[25] / (S[24] + w[1] + S[6])
+sin_alpha = S[25] / (S[24] - w[2] + S[6] - S[26])
 cos_alpha = np.cos(np.arcsin(sin_alpha))
-S[28] = (S[24] + w[1] + S[6]) / cos_alpha
+S[28] = (S[24] - w[2] + S[6] - S[26]) / cos_alpha
 S[27] = S[25] / cos_alpha  # angle wall down distance
 
 S = [i * scale for i in S]
@@ -707,26 +762,10 @@ if __name__ == "__main__":
 
     # endregion
     # region page 2 original plan
-    doc.append(NoEscape(r"\vspace*{1cm} "))
-    doc.append(Command("centering "))
-    doc.append(Command("begin", "tikzpicture"))
 
-    #  region perimeter
-    print_list(
-        doc,
-        [
-            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
-            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
-            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
-            [
-                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
-                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
-            ],
-        ],
-        0,
-        0,
-    )
-    # endregion
+    get_header()
+    draw_perimeter()
+
     measurements(
         doc,
         "hor_top",
@@ -882,28 +921,8 @@ if __name__ == "__main__":
     # endregion
     # region page 3 removed walls
 
-    doc.append(NoEscape(r"\vspace*{1cm} "))
-
-    doc.append(Command("centering"))
-
-    doc.append(Command("begin", "tikzpicture"))
-
-    print_list(
-        doc,
-        [
-            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
-            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
-            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
-            [
-                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
-                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
-            ],
-        ],
-        0,
-        0,
-    )
-
-    ###########################################################
+    get_header()
+    draw_perimeter()
 
     # hallway with removed walls
     print_list(
@@ -1064,28 +1083,8 @@ if __name__ == "__main__":
     doc.append(NoEscape("\pagebreak"))
     # endregion
     # region page 4 installed walls
-    doc.append(NoEscape(r"\vspace*{1cm} "))
-
-    doc.append(Command("centering"))
-
-    doc.append(Command("begin", "tikzpicture"))
-
-    print_list(
-        doc,
-        [
-            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
-            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
-            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
-            [
-                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
-                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
-            ],
-        ],
-        0,
-        0,
-    )
-
-    ###########################################################
+    get_header()
+    draw_perimeter()
 
     # hallway with removed walls
     print_list(
@@ -1269,20 +1268,23 @@ if __name__ == "__main__":
 
     doc.append(Command("begin", "tikzpicture"))
 
-    print_list(
-        doc,
-        [
-            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
-            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
-            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
-            [
-                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
-                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
-            ],
-        ],
-        0,
-        0,
-    )
+    # perimeter
+    draw_perimeter()
+
+    # print_list(
+    #    doc,
+    #    [
+    #        [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
+    #        [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
+    #        [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
+    #        [
+    #            S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
+    #            -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
+    #        ],
+    #    ],
+    #    0,
+    #    0,
+    # )
 
     ###########################################################
 
@@ -1573,7 +1575,7 @@ if __name__ == "__main__":
     create_stamp("Экспикация полов в помещениях квартиры", PageCount, TotalPages, "")
     doc.append(NoEscape("\pagebreak"))
 # endregion
-doc.generate_pdf("ml", clean_tex=False)
+doc.generate_pdf("app122-166-angle", clean_tex=False)
 
 
 # Add the background setup using TikZ
