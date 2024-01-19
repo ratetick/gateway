@@ -21,14 +21,6 @@ from pylatex import (
 
 
 # region functions
-def get_header():
-    doc.append(NoEscape(r"\vspace*{.5cm} "))
-
-    doc.append(Command("centering"))
-
-    doc.append(Command("begin", "tikzpicture"))
-
-
 def print_latex(doc, V, H, stx, sty):
     zipset = zip(H, V)
     stx = round(stx, 3)
@@ -45,191 +37,9 @@ def print_latex(doc, V, H, stx, sty):
     str += ";\n"
     doc.append(NoEscape(str))
 
- 
-def draw_perimeter():
-    cur_vector = draw_vector_vector(
-        doc, 0, 0, 0, -(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4])
-    )
-    cur_vector = draw_vector_vector(doc, *cur_vector, w[4], 0)
-    cur_vector = draw_vector_vector(doc, *cur_vector, 0, S[13] - S[4] - w[3] + w[4])
-    cur_vector = draw_vector_vector(
-        doc, *cur_vector, S[3] + w[1] - w[3] + w[3] - w[4], 0
-    )
-    cur_vector = draw_vector_vector(doc, *cur_vector, 0, -(S[13] - S[4] - w[3] + w[4]))
-    cur_vector = draw_vector_vector(doc, *cur_vector, w[3] + S[14] + w[4], 0)
-    cur_vector = draw_vector_vector(
-        doc, *cur_vector, 0, S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]
-    )
-    cur_vector = draw_vector_vector(
-        doc,
-        *cur_vector,
-        -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
-        0,
-    )
-
-
-def draw_balcony():
-        cur_vector= draw_vector_vector(doc,w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20],0,0,-S[21] * 8 / 9)
-        cur_vector= draw_vector_vector(doc, *cur_vector,S[3]+ w[1]+ w[2]+ w[5]+ S[14]
-                - (w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20]),0)
-
-
-
-def draw_hallway_stay(lcolor='black'):
-    cur_vector= draw_vector_vector(doc, w[4],-S[9]-2*w[1],0,-S[1] + S[2],lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector,-w[1],0,lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector,0,-S[2],lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector,S[3],0,lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector,0,S[4],lcolor)
-    
-    return cur_vector
-def draw_hallway_go(cur_vector,lcolor='black'):
-    cur_vector= draw_vector_vector(doc, *cur_vector,-S[16]+S[15],0,lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector,0,S[5]+2*w[1],lcolor)
-    return cur_vector
-def draw_hallway_stay1(cur_vector,lcolor='black'):
-    cur_vector= draw_vector_vector(doc, *cur_vector,S[6],0,lcolor)
-    return cur_vector
-def draw_hallway_go1(cur_vector,lcolor='black'):
-    cur_vector= draw_vector_vector(doc, *cur_vector,0,S[12],lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector,-S[7],0,lcolor)
-    return cur_vector
-def draw_hallway():
-    cur_vector=draw_hallway_stay()
-    cur_vector=draw_hallway_go(cur_vector)
-    cur_vector=draw_hallway_stay1(cur_vector)
-    cur_vector=draw_hallway_go1(cur_vector)
-
-def draw_hallway_removed():
-    cur_vector=draw_hallway_stay()
-    cur_vector=draw_hallway_go(cur_vector,'red')
-    cur_vector=draw_hallway_stay1(cur_vector)
-    cur_vector=draw_hallway_go1(cur_vector,'red')
-
-def draw_hallway_new():
-    cur_vector=draw_hallway_stay()
-    cur_vector=draw_hallway_go(cur_vector,'white')
-    cur_vector=draw_hallway_stay1(cur_vector)
-    
-
-
-
-def draw_bathroom_stay(lcolor='black'):
-    cur_vector= draw_vector_vector(doc, w[4],-w[1], 0,-S[9],lcolor)
-    cur_vector= draw_vector_vector(doc,w[4],-w[1], S[8],0,lcolor)
-    
-    print_list(doc, [[-S[9], S[8]], [S[9], -S[8]]], w[4], -w[1])
-
-def draw_bathroom_go(lcolor='black'):
-    cur_vector= draw_vector_vector(doc, w[4],-w[1]-S[9], S[8],0,lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector, 0,S[9],lcolor)
-
-def draw_bathroom():
-    draw_bathroom_stay()
-    draw_bathroom_go()
-def draw_bathroom_removed():
-    draw_bathroom_stay()
-    draw_bathroom_go('red')
-
-def draw_toiletroom_stay(cur_vector,lcolor='black'):
-    cur_vector= draw_vector_vector(doc, *cur_vector, 0,S[10],lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector, -S[11],0,lcolor)
-    
-def draw_toiletroom_go(lcolor='black'):
-    cur_vector= draw_vector_vector(doc, w[4] + S[8] + w[1],-w[1] - S[9] + S[10],0,-S[10],lcolor)
-    cur_vector= draw_vector_vector(doc, *cur_vector, S[11],0,lcolor)
-    return cur_vector
-def draw_toiletroom():
-    cur_vector=draw_toiletroom_go()
-    draw_toiletroom_stay(cur_vector)
-     
-def draw_toiletroom_removed():
-    cur_vector=draw_toiletroom_go('red')
-    draw_toiletroom_stay(cur_vector)
-    
-def draw_kitchen_stay1(lcolor='black'):
-    cur_vector= draw_vector_vector(doc,w[4] + S[8] + w[1] + w[3] + S[11],-w[1],0,-S[18]/3,lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,-w[2],0,lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,0,-S[18]/6,lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,w[2],0,lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,0,A[1][1]+S[18]/2+w[1],lcolor)
-    return cur_vector
-    
-def draw_kitchen_go(cur_vector,lcolor='black'):
-    cur_vector= draw_vector_vector(doc,*cur_vector,0,-A[1][1]-S[18]-w[1],lcolor)
-    return cur_vector
-
-def draw_kitchen_stay2(cur_vector,lcolor='black'):
-    cur_vector= draw_vector_vector(doc,*cur_vector,S[19],0,lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,0,S[18],lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,-S[19],0,lcolor)
-
-def draw_kitchen():
-    cur_vector=draw_kitchen_stay1()
-    cur_vector=draw_kitchen_go(cur_vector)
-    draw_kitchen_stay2(cur_vector)
-def draw_kitchen_removed():
-    cur_vector=draw_kitchen_stay1()
-    cur_vector=draw_kitchen_go(cur_vector,'red')
-    draw_kitchen_stay2(cur_vector)
-
-def draw_livingroom_go(lcolor='black'):
-    cur_vector= draw_vector_vector(doc,w[4]+S[24]+w[1],-3*w[1]-S[12]-S[9],0,-S[5],lcolor)
-    return cur_vector
-
-def draw_livingroom_stay(cur_vector,lcolor='black'):
-    cur_vector= draw_vector_vector(doc,*cur_vector,S[16],0,lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,0,S[22],lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,-(S[16]-S[17]),0,lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,0,S[5]-S[22],lcolor)
-    cur_vector= draw_vector_vector(doc,*cur_vector,-S[17],0,lcolor)
-    pass
-def draw_livingroom():
-    cur_vector=draw_livingroom_go()
-    draw_livingroom_stay(cur_vector)
-
-def draw_livingroom_removed():
-    cur_vector=draw_livingroom_go('red')
-    draw_livingroom_stay(cur_vector)
-
-def draw_bedroom():
-    cur_vector= draw_vector_vector(doc,w[3] + S[3] + w[1],-4 * w[1] - S[5] - S[12] - S[9],0,-S[13])
-    cur_vector= draw_vector_vector(doc,*cur_vector,S[14],0)
-    cur_vector= draw_vector_vector(doc,*cur_vector,0,S[23])
-    cur_vector= draw_vector_vector(doc,*cur_vector,-S[15],0)
-    
-def draw_vector(doc, x_start, y_start, x_end, y_end, lcolor="black"):
-    x_start = round(x_start, 3)
-    y_start = round(y_start, 3)
-    x_end = round(x_end, 3)
-    y_end = round(y_end, 3)
-
-    vector_to_draw = (
-        f"\draw[very thick][color={lcolor}]"
-        + f"({x_start},{y_start})--({x_end},{y_end});"
-    )
-    doc.append(NoEscape(vector_to_draw))
-    return [x_end, y_end]
-
-
-def draw_vector_vector(doc, x_start, y_start, x, y, lcolor="black"):
-    x_start = round(x_start, 3)
-    y_start = round(y_start, 3)
-    x = round(x, 3)
-    y = round(y, 3)
-
-    vector_to_draw = (
-        f"\draw[very thick][color={lcolor}]"
-        + f"({x_start},{y_start})--({x_start+x},{y_start+y});"
-    )
-    doc.append(NoEscape(vector_to_draw))
-    return [x_start + x, y_start + y]
-
 
 def draw_line(x_start, y_start, length):
-    return (
-        r"\draw[very thick] " + f"({x_start},{y_start})--({x_start+length},{y_start});"
-    )
+    return r"\draw " + f"({x_start},{y_start})--({x_start+length},{y_start});"
 
 
 def draw_tar(x_start, y_start, length, width):
@@ -301,7 +111,6 @@ def print_list(doc, plist, stx, sty, lcolor="black"):
     doc.append(NoEscape(str))
 
     #     |
-
 
 
 def north_south_door(doc, x, y, wall, size, lcolor="black"):  #  |  |   |
@@ -595,31 +404,12 @@ S = [
     3.36,  # 22
     3.16,  # 23
     1.16,  # 24
-    0.8,  # 25 door size not on original plan
-    1,  # 26 bathroom wall size
-    0,  # 27 bathroom coordinate
-    0,  # 28 bathroom angle wall
 ]
-w = [0, 0.17, 0.3, 0.4, 0.5, 0.6, 1.5, 0.07]
-# angle wall calculations
-sin_alpha = S[25] / (S[24] - w[2] + S[6] - S[26])
-cos_alpha = np.cos(np.arcsin(sin_alpha))
-S[28] = (S[24] - w[2] + S[6] - S[26]) / cos_alpha
-S[27] = S[25] / cos_alpha  # angle wall down distance
-
 S = [i * scale for i in S]
 
-
+w = [0, 0.145, 0.3, 0.4, 0.5, 0.6, 1.5]
 #    0     1    2     3    4   5    6
 w = [i * scale for i in w]
-A = [
-    [
-        w[4] + S[24] + S[6],
-        -w[1] - S[9] - w[1] - S[12],  # south east coner hollway
-    ],
-    [w[4] + S[8] + w[1] + S[11], -w[1] - S[9]],  # south east coner bathroom
-]
-
 
 TotalPages = 7
 PageCount = 0
@@ -882,7 +672,9 @@ if __name__ == "__main__":
     doc.append(NoEscape(r"\vspace*{.2cm} "))
 
     with doc.create(Figure(position="htbp")) as fig:
-        fig.add_image("122166map.jpg", width=NoEscape(r".6\linewidth"))
+        fig.add_image(
+            "/home/vlad/gateway/122166map.jpg", width=NoEscape(r".6\linewidth")
+        )
         # fig.add_caption("Your Image Caption")
     doc.append(NoEscape(r"\vfill"))
 
@@ -892,11 +684,28 @@ if __name__ == "__main__":
     doc.append(NoEscape("\pagebreak"))
 
     # endregion
+    ###################################################################################
     # region page 2 original plan
+    doc.append(NoEscape(r"\vspace*{1cm} "))
+    doc.append(Command("centering "))
+    doc.append(Command("begin", "tikzpicture"))
 
-    get_header()
-    draw_perimeter()
-
+    #  region perimeter
+    print_list(
+        doc,
+        [
+            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
+            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
+            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
+            [
+                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
+                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
+            ],
+        ],
+        0,
+        0,
+    )
+    # endregion
     measurements(
         doc,
         "hor_top",
@@ -910,10 +719,6 @@ if __name__ == "__main__":
         ),
     )
 
-    #measurements(
-    #    doc,
-    #    "vert_right",
-    #)
     measurements(
         doc,
         "vert_left",
@@ -925,14 +730,78 @@ if __name__ == "__main__":
     )
     ###########################################################
 
-    draw_hallway()
-    draw_bathroom()
-    draw_toiletroom()
-    draw_kitchen()
-    draw_livingroom()
-    draw_bedroom()
-    draw_balcony() 
-    
+    # hallway
+    print_list(
+        doc,
+        [
+            [-S[1] + S[2], -w[1]],
+            [-S[2], S[3]],
+            [S[4], -S[16] + S[15]],
+            [S[5] + 2 * w[1], S[6]],
+            [S[12], -S[7]],
+        ],
+        w[4],
+        -S[9] - 2 * w[1],
+    )
+    # print_list(doc, [[0, S[24] - w[1]]], w[4], -S[9] - 2 * w[1], "green")
+    #####################################################
+    # bathroom
+    print_list(doc, [[-S[9], S[8]], [S[9], -S[8]]], w[4], -w[1])
+
+    #########################################################
+    # toilet
+    print_list(
+        doc,
+        [[-S[10], S[11]], [S[10], -S[11]]],
+        w[4] + S[8] + w[1],
+        -w[1] - S[9] + S[10],
+    )
+
+    ###########################################################
+    # kitchen
+    print_list(
+        doc,
+        [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[18] / 2, S[19]], [S[18], -S[19]]],
+        w[4] + S[8] + w[1] + w[3] + S[11],
+        -w[1],
+    )
+
+    #################################################
+    # living room
+    print_list(
+        doc,
+        [[-S[5], S[16]], [S[22], -(S[16] - S[17])], [S[5] - S[22], -S[17]]],
+        w[4] + S[24] + w[1],
+        -3 * w[1] - S[12] - S[9],
+    )
+    ########################################################
+    # bedroom
+    print_list(
+        doc,
+        [[-S[13], S[14]], [S[23], -S[15]]],
+        w[3] + S[3] + w[1],
+        -4 * w[1] - S[5] - S[12] - S[9],
+    )
+
+    ########################################################
+    # balcony
+    print_list(
+        doc,
+        [
+            [
+                -S[21] * 8 / 9,
+                S[3]
+                + w[1]
+                + w[2]
+                + w[5]
+                + S[14]
+                - (w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20]),
+            ]
+        ],
+        w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20],
+        0,
+    )
+
     ########################################################
     # windows
     print_window(
@@ -986,17 +855,105 @@ if __name__ == "__main__":
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
+    ####################################################################################
     # region page 3 removed walls
 
-    get_header()
-    draw_perimeter()
-    draw_hallway_removed()
-    draw_bathroom_removed()     
-    draw_toiletroom_removed()
-    draw_kitchen_removed()
-    draw_livingroom_removed()
+    doc.append(NoEscape(r"\vspace*{1cm} "))
 
-     
+    doc.append(Command("centering"))
+
+    doc.append(Command("begin", "tikzpicture"))
+
+    print_list(
+        doc,
+        [
+            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
+            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
+            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
+            [
+                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
+                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
+            ],
+        ],
+        0,
+        0,
+    )
+
+    ###########################################################
+
+    # hallway with removed walls
+    print_list(
+        doc,
+        [
+            [-S[1] + S[2], -w[1]],
+            [-S[2], S[3]],
+            [S[4], -S[16] + S[15]],
+        ],
+        w[4],
+        -S[9] - 2 * w[1],
+    )
+    print_list(
+        doc,
+        [[S[5] + 2 * w[1], 0]],
+        w[4] - w[1] + S[3] - S[16] + S[15],
+        -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4],
+        "red",
+    )
+    print_list(
+        doc,
+        [
+            [0, S[6]],
+            [S[12], 0],
+        ],
+        w[4] - w[1] + S[3] - S[16] + S[15],
+        -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
+    )
+    print_list(
+        doc,
+        [
+            # [S[12], -S[7]],
+            [0, -S[7]],
+        ],
+        w[4] - w[1] + S[3] - S[16] + S[15] + S[6],
+        -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1] + S[12],
+        "red",
+    )
+
+    #####################################################
+    # bathroom with removed walls
+    print_list(doc, [[-S[9], 0]], w[4], -w[1])
+    print_list(doc, [[0, S[8]]], w[4], -w[1] - S[9], "red")
+    print_list(doc, [[S[9], 0]], w[4] + S[8], -w[1] - S[9], "red")
+    print_list(doc, [[0, -S[8]]], w[4] + S[8], -w[1] - S[9] + S[9])
+
+    #########################################################
+    # toilet
+    print_list(doc, [[-S[10], S[11]]], w[4] + S[8] + w[1], -w[1] - S[9] + S[10], "red")
+    print_list(
+        doc,
+        [[S[10], -S[11]]],
+        w[4] + S[8] + w[1] + S[11],
+        -w[1] - S[9] + S[10] - S[10],
+    )
+
+    ###########################################################
+    # kitchen
+    print_list(
+        doc,
+        [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[18] / 2, S[19]], [S[18], -S[19]]],
+        w[4] + S[8] + w[1] + w[3] + S[11],
+        -w[1],
+    )
+
+    #################################################
+    # living room
+    print_list(doc, [[-S[5], 0]], w[4] + S[24] + w[1], -3 * w[1] - S[12] - S[9], "red")
+    print_list(
+        doc,
+        [[0, S[16]], [S[22], -(S[16] - S[17])], [S[5] - S[22], -S[17]]],
+        w[4] + S[24] + w[1],
+        -3 * w[1] - S[12] - S[9] - S[5],
+    )
     ########################################################
     # bedroom
     print_list(
@@ -1082,38 +1039,58 @@ if __name__ == "__main__":
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
+    ####################################################################################
     # region page 4 installed walls
-    get_header()
-    draw_perimeter()
-    draw_hallway_new()
+    doc.append(NoEscape(r"\vspace*{1cm} "))
 
-    # # hallway with removed walls
-    # print_list(
-    #     doc,
-    #     [
-    #         [-S[1] + S[2], -w[1]],
-    #         [-S[2], S[3]],
-    #         [S[4] + w[1], 0],  # S[15]-S[16]
-    #     ],
-    #     w[4],
-    #     -S[9] - 2 * w[1],
-    # )
+    doc.append(Command("centering"))
 
-    # print_list(
-    #     doc,
-    #     [
-    #         [0, S[6] - w[2]],
-    #     ],
-    #     w[4] - w[1] + S[3] - S[16] + S[15],
-    #     -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
-    # )
-    # print_list(
-    #     doc,
-    #     [[0, S[24] - w[1]], [-S[12] - w[1], 2 * w[1]]],
-    #     w[4],
-    #     -S[9] - 2 * w[1],
-    #     "green",
-    # )
+    doc.append(Command("begin", "tikzpicture"))
+
+    print_list(
+        doc,
+        [
+            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
+            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
+            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
+            [
+                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
+                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
+            ],
+        ],
+        0,
+        0,
+    )
+
+    ###########################################################
+
+    # hallway with removed walls
+    print_list(
+        doc,
+        [
+            [-S[1] + S[2], -w[1]],
+            [-S[2], S[3]],
+            [S[4] + w[1], 0],  # S[15]-S[16]
+        ],
+        w[4],
+        -S[9] - 2 * w[1],
+    )
+
+    print_list(
+        doc,
+        [
+            [0, S[6] - w[2]],
+        ],
+        w[4] - w[1] + S[3] - S[16] + S[15],
+        -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
+    )
+    print_list(
+        doc,
+        [[0, S[24] - w[1]], [-S[12] - w[1], 2 * w[1]]],
+        w[4],
+        -S[9] - 2 * w[1],
+        "green",
+    )
 
     #####################################################
     # bathroom new walls
@@ -1261,7 +1238,8 @@ if __name__ == "__main__":
         "",
     )
     doc.append(NoEscape("\pagebreak"))
-    # endregion  
+    # endregion
+    ####################################################################################
     # region page 5 final plan
     doc.append(NoEscape(r"\vspace*{1cm} "))
 
@@ -1269,23 +1247,20 @@ if __name__ == "__main__":
 
     doc.append(Command("begin", "tikzpicture"))
 
-    # perimeter
-    draw_perimeter()
-
-    # print_list(
-    #    doc,
-    #    [
-    #        [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
-    #        [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
-    #        [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
-    #        [
-    #            S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
-    #            -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
-    #        ],
-    #    ],
-    #    0,
-    #    0,
-    # )
+    print_list(
+        doc,
+        [
+            [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
+            [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
+            [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
+            [
+                S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
+                -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
+            ],
+        ],
+        0,
+        0,
+    )
 
     ###########################################################
 
@@ -1293,46 +1268,37 @@ if __name__ == "__main__":
     print_list(
         doc,
         [
-            [-S[1] + S[2] + S[12], -w[1]],
+            [-S[1] + S[2], -w[1]],
             [-S[2], S[3]],
             [S[4] + w[1], 0],  # S[15]-S[16]
         ],
         w[4],
-        -S[9] - S[12] - 2 * w[1],
+        -S[9] - 2 * w[1],
     )
 
-    # print_list(
-    #    doc,
-    #    [
-    #        [0, S[6] - w[2]],
-    #    ],
-    #    w[4] - w[1] + S[3] - S[16] + S[15],
-    #    -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
-    # )
     print_list(
         doc,
-        [[0, S[24] - w[1]], [w[1], 0]],
+        [
+            [0, S[6] - w[2]],
+        ],
+        w[4] - w[1] + S[3] - S[16] + S[15],
+        -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
+    )
+    print_list(
+        doc,
+        [[0, S[24] - w[1]], [-S[12] - w[1], 2 * w[1]]],
         w[4],
-        -S[9] - S[12] - 3 * w[1],
+        -S[9] - 2 * w[1],
     )
 
     #####################################################
     # bathroom
-    draw_vector(doc, A[0][0] - w[2], A[0][1], w[4] + S[26], A[0][1] - S[27])
-    draw_vector(
-        doc,
-        S[26] + w[4],
-        -w[1] - S[9] - w[1] - S[12],
-        S[26] + w[4] + S[25] * sin_alpha,
-        -w[1] - S[9] - w[1] - S[12] - S[25] * cos_alpha,
-    )
-    print_list(doc, [[-S[9] - w[1] - S[12], 0]], w[4], -w[1])
+    print_list(doc, [[-S[9], 0]], w[4], -w[1])
     print_list(
         doc,
-        # [[0, S[24]], [-S[12] - w[1], 0]],
-        [[0, S[26]]],
+        [[0, S[24]], [-S[12] - w[1], 0]],
         w[4],
-        -S[9] - w[1] - S[12] - w[1],
+        -S[9] - w[1],
     )
 
     print_list(doc, [[0, -S[8] - w[1]]], w[4] + S[8] + w[1], -w[1] - S[9] + S[9])
@@ -1354,9 +1320,15 @@ if __name__ == "__main__":
         w[4] + S[8] + w[1] + S[11],
         -w[1] - S[9] + S[10] - S[10],
     )
-
+    west_east_door(
+        doc,
+        w[4] + S[24] - w[1] / 2,
+        -(2 * w[1] + S[9] + S[12] / 2),
+        w[1],
+        0.7,
+    )
     ###########################################################
-    # kitchen
+    # kitchen n
     print_list(
         doc,
         [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[9] + S[18] / 2, 0]],
@@ -1384,16 +1356,10 @@ if __name__ == "__main__":
     )  # kitchen door
     #################################################
     # living room
-    draw_vector(
-        doc, A[0][0] - w[2], A[0][1] - w[1], w[4] + S[26], A[0][1] - S[27] - w[1]
-    )
+
     print_list(
         doc,
-        [
-            [0, S[15] + w[1]],
-            [S[22], -(S[16] - S[17])],
-            [S[5] - S[22], -S[20] - w[2] - w[1] - w[7]],
-        ],
+        [[0, S[15] + w[1]], [S[22], -(S[16] - S[17])], [S[5] - S[22], -S[17]]],
         w[4] + S[24] + w[1] - S[15] + S[16] - w[1],
         -3 * w[1] - S[12] - S[9] - S[5],
     )
@@ -1469,6 +1435,7 @@ if __name__ == "__main__":
     )
     doc.append(NoEscape("\pagebreak"))
     # endregion
+    #####################################################################################
     # region page 6 Floors structure
 
     doc.append(NoEscape(r"\vspace*{1cm} "))
@@ -1576,7 +1543,7 @@ if __name__ == "__main__":
     create_stamp("Экспикация полов в помещениях квартиры", PageCount, TotalPages, "")
     doc.append(NoEscape("\pagebreak"))
 # endregion
-doc.generate_pdf("app122-166", clean_tex=False)
+doc.generate_pdf("ml", clean_tex=False)
 
 
 # Add the background setup using TikZ
