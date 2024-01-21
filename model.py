@@ -117,8 +117,7 @@ def draw_hallway_new():
 def draw_bathroom_stay(lcolor='black'):
     cur_vector= draw_vector_vector(doc, w[4],-w[1], 0,-S[9],lcolor)
     cur_vector= draw_vector_vector(doc,w[4],-w[1], S[8],0,lcolor)
-    
-    print_list(doc, [[-S[9], S[8]], [S[9], -S[8]]], w[4], -w[1])
+    return cur_vector
 
 def draw_bathroom_go(lcolor='black'):
     cur_vector= draw_vector_vector(doc, w[4],-w[1]-S[9], S[8],0,lcolor)
@@ -164,13 +163,26 @@ def draw_kitchen_stay2(cur_vector,lcolor='black'):
     cur_vector= draw_vector_vector(doc,*cur_vector,0,S[18],lcolor)
     cur_vector= draw_vector_vector(doc,*cur_vector,-S[19],0,lcolor)
 
+def draw_kitchen_buildwall(cur_vector,lcolor='black'):
+
+    cur_vector= draw_vector_vector(doc,*cur_vector,-w[2],0,lcolor)
+    cur_vector= draw_vector_vector(doc,*cur_vector,0,-S[12]-w[1],lcolor)
+    cur_vector= draw_vector_vector(doc,*cur_vector,w[2],0,lcolor)
+    return cur_vector
+
 def draw_kitchen():
     cur_vector=draw_kitchen_stay1()
     cur_vector=draw_kitchen_go(cur_vector)
     draw_kitchen_stay2(cur_vector)
+
 def draw_kitchen_removed():
     cur_vector=draw_kitchen_stay1()
     cur_vector=draw_kitchen_go(cur_vector,'red')
+    draw_kitchen_stay2(cur_vector)
+
+def draw_kitchen_new(lcolor='black'):
+    cur_vector=draw_kitchen_stay1()
+    cur_vector=draw_kitchen_buildwall(cur_vector,lcolor)
     draw_kitchen_stay2(cur_vector)
 
 def draw_livingroom_go(lcolor='black'):
@@ -183,7 +195,7 @@ def draw_livingroom_stay(cur_vector,lcolor='black'):
     cur_vector= draw_vector_vector(doc,*cur_vector,-(S[16]-S[17]),0,lcolor)
     cur_vector= draw_vector_vector(doc,*cur_vector,0,S[5]-S[22],lcolor)
     cur_vector= draw_vector_vector(doc,*cur_vector,-S[17],0,lcolor)
-    pass
+    
 def draw_livingroom():
     cur_vector=draw_livingroom_go()
     draw_livingroom_stay(cur_vector)
@@ -198,6 +210,27 @@ def draw_bedroom():
     cur_vector= draw_vector_vector(doc,*cur_vector,0,S[23])
     cur_vector= draw_vector_vector(doc,*cur_vector,-S[15],0)
     
+
+def draw_hallway_new(lcolor='black'):
+        cur_vector= draw_vector_vector(doc,w[4],-3*w[1]-S[12]-S[9],S[24]+w[1],0,lcolor)
+        cur_vector= draw_vector_vector(doc,w[4],-3*w[1]-S[12]-S[9],0,-S[1]+S[12]+S[2]+w[1])
+        cur_vector= draw_vector_vector(doc,*cur_vector,-w[1],0)
+        cur_vector= draw_vector_vector(doc,*cur_vector,0,-S[2])
+        cur_vector= draw_vector_vector(doc,*cur_vector,S[3],0)
+        cur_vector= draw_vector_vector(doc,*cur_vector,0,S[4]+w[1])
+
+     
+def draw_bathroom_new(lcolor='black'):
+        cur_vector=draw_bathroom_stay()
+        cur_vector= draw_vector_vector(doc,*cur_vector,0,-S[9] + S[10])
+        cur_vector= draw_vector_vector(doc,*cur_vector,S[11]+w[1],0)
+        cur_vector= draw_vector_vector(doc,*cur_vector,0,-S[10])
+        cur_vector= draw_vector_vector(doc,*cur_vector,0,-S[12]-w[1],lcolor)
+        cur_vector= draw_vector_vector(doc,*cur_vector,-S[6]+w[2],0)
+        cur_vector= draw_vector_vector(doc,*cur_vector,-S[24],0,lcolor)
+        cur_vector= draw_vector_vector(doc,*cur_vector,0,S[12]+w[1])
+
+    
 def draw_vector(doc, x_start, y_start, x_end, y_end, lcolor="black"):
     x_start = round(x_start, 3)
     y_start = round(y_start, 3)
@@ -210,6 +243,21 @@ def draw_vector(doc, x_start, y_start, x_end, y_end, lcolor="black"):
     )
     doc.append(NoEscape(vector_to_draw))
     return [x_end, y_end]
+
+def draw_windows():
+    print_window(
+        doc, w[4] + S[8] + w[1] + w[3] + S[11] + S[20], -w[1] - S[21] / 2 + w[6] / 2
+    )  # kitchen
+
+    print_window(
+        doc, w[4] + S[16] + w[1] + S[24], -2 * w[1] - S[21] - S[5] / 2 + w[6] / 2
+    )  # living
+
+    print_window(
+        doc,
+        w[4] + S[16] + w[1] + S[24],
+        -3 * w[1] - S[21] - S[5] - S[23] / 2 + w[6] / 2,
+    )  # bed
 
 
 def draw_vector_vector(doc, x_start, y_start, x, y, lcolor="black"):
@@ -349,15 +397,15 @@ def west_east_door(doc, x, y, wall, size, lcolor="black"):
     )
 
 
-def shower(doc, x, y, width, length):
+def shower(doc, x, y, width, length,lcolor='black'):
     doc.append(
         NoEscape(
-            f"\draw[very thick]({round(x,3)},{round(y,3)}) rectangle ({round(x+length,3)},{round(y-width,3)}) ;"
+            f"\draw[very thick][color={lcolor}]({round(x,3)},{round(y,3)}) rectangle ({round(x+length,3)},{round(y-width,3)}) ;"
         )
     )
     doc.append(
         NoEscape(
-            f"\draw[very thick]({round(x+.2*length,3)},{round(y-.2*width,3)}) circle (2pt);"
+            f"\draw[very thick][color={lcolor}]({round(x+.2*length,3)},{round(y-.2*width,3)}) circle (2pt);"
         )
     )
 
@@ -406,24 +454,82 @@ def toilet(doc, x, y, width, length):
     )
 
 
-def bathtab(doc, x, y, width, length):
+def bathtab(doc, x, y, width, length,lcolor):
     doc.append(
         NoEscape(
-            f"\draw[very thick]{round(x,3),round(y-length,3)}--{round(x,3),round(y,3)}--{round(x+width,3),round(y,3)}--{round(x+width,3),round(y-length,3)};"
+            f"\draw[very thick][color={lcolor}]{round(x,3),round(y-length,3)}--{round(x,3),round(y,3)}--{round(x+width,3),round(y,3)}--{round(x+width,3),round(y-length,3)};"
         )
     )
 
     doc.append(
         NoEscape(
-            f"\draw[very thick] {round(x,3),round(y-length,3)} arc ({round(180,3)}:{round(360,3)}:{round(width/2,3)});"
+            f"\draw[very thick][color={lcolor}] {round(x,3),round(y-length,3)} arc ({round(180,3)}:{round(360,3)}:{round(width/2,3)});"
         )
     )
 
     doc.append(
         NoEscape(
-            f"\draw[very thick,fill=black] {round(x+width/2,3),round(y-length/4,3)} circle (0.05);"
+            f"\draw[very thick,fill=black][color={lcolor}] {round(x+width/2,3),round(y-length/4,3)} circle (0.05);"
         )
     )
+
+
+def fixtures_stay():
+    faucet(doc, S[8]*2/3 + w[4], -1.5 * w[1], 0.6, 0.6)
+    faucet(doc, S[13] + S[20] / 4 + w[4], -1.5 * w[1], 0.6, 0.6)
+    toilet(doc, S[8] + S[11] / 3 + w[4] + w[1], -w[1] - S[9] + S[10], 0.55, 0.65)
+    cooktop(doc, S[13] + S[20] * 2 / 3 + w[4], -1.5 * w[1], 0.6, 0.6)
+
+def fixtures_go(lcolor='black'):
+    bathtab(doc, w[4] + w[1], -2 * w[1], 0.9, 1.5,lcolor)
+def fixtures_new(lcolor='black'):
+    bathtab(doc, w[4] + w[1], -2 * w[1]-S[12], 0.9, 1.5,lcolor)
+    shower(doc,w[4] + w[1],-2*w[1], 1.1,1.1,lcolor)
+
+def doors_new(lcolor='black'):
+    north_south_door(
+        doc,
+        w[4] + S[8] + w[1] + w[3] + S[11] + S[20] / 3,
+        -w[1] - 0.5 * w[1] - S[21],
+        w[1],
+        0.7,
+        lcolor,
+    )  # kitchen door
+
+    north_south_door(
+        doc,
+        w[4] + 3/4*S[8] ,
+        -w[1] - 0.5 * w[1] - S[21],
+        w[1],
+        0.7,
+        lcolor,
+    ) #bathroom door    
+
+def doors_stay():
+    north_south_door(
+        doc, w[4] + S[24] + S[14] / 3 + w[1], -5 * w[1] / 2 - S[5] - S[21], w[1], 0.7
+    )  # bedroom door
+
+    north_south_door(
+        doc, w[4] + S[24] / 2, -2 * w[1] - S[1] - S[9] - w[3] / 2, w[3], 0.8
+    )  # entrance door
+
+def doors_removed(lcolor='black'):
+
+    north_south_door(
+        doc, w[4] + 2 * S[8] / 3, -3 * w[1] / 2 - S[9], w[1], 0.5,lcolor
+    )  # bathroom door
+    north_south_door(
+        doc, w[4] + S[8] + w[1] + S[11] / 2, -3 * w[1] / 2 - S[9], w[1], 0.5,lcolor
+    )  # toilet door
+    west_east_door(
+        doc, w[4] + S[24] + w[1] / 2, -3 * w[1] - S[9] - S[12] - S[5] / 2, w[1], 0.7,lcolor
+    )  # living room door
+    west_east_door(
+        doc, w[4] + S[7] + w[1] / 2, -2 * w[1] - S[9] - S[12] / 2, w[1], 0.7,lcolor
+    )  # kitchen door
+    ##################################################
+
 
 
 def draw_end_line(doc, x, y, len):
@@ -600,7 +706,7 @@ S = [
     0,  # 27 bathroom coordinate
     0,  # 28 bathroom angle wall
 ]
-w = [0, 0.17, 0.3, 0.4, 0.5, 0.6, 1.5, 0.07]
+w = [0, 0.17, 0.253, 0.4, 0.5, 0.6, 1.5, 0.07]
 # angle wall calculations
 sin_alpha = S[25] / (S[24] - w[2] + S[6] - S[26])
 cos_alpha = np.cos(np.arcsin(sin_alpha))
@@ -932,50 +1038,15 @@ if __name__ == "__main__":
     draw_livingroom()
     draw_bedroom()
     draw_balcony() 
-    
-    ########################################################
-    # windows
-    print_window(
-        doc, w[4] + S[8] + w[1] + w[3] + S[11] + S[20], -w[1] - S[21] / 2 + w[6] / 2
-    )  # kitchen
+    draw_windows()
 
-    print_window(
-        doc, w[4] + S[16] + w[1] + S[24], -2 * w[1] - S[21] - S[5] / 2 + w[6] / 2
-    )  # living
-
-    print_window(
-        doc,
-        w[4] + S[16] + w[1] + S[24],
-        -3 * w[1] - S[21] - S[5] - S[23] / 2 + w[6] / 2,
-    )  # bed
 
     ###########################################################
-    # doors
-    north_south_door(
-        doc, w[4] + S[24] + S[14] / 3 + w[1], -5 * w[1] / 2 - S[5] - S[21], w[1], 0.7
-    )  # bedroom door
-    north_south_door(
-        doc, w[4] + 2 * S[8] / 3, -3 * w[1] / 2 - S[9], w[1], 0.5
-    )  # bathroom door
-    north_south_door(
-        doc, w[4] + S[8] + w[1] + S[11] / 2, -3 * w[1] / 2 - S[9], w[1], 0.5
-    )  # toilet door
-    north_south_door(
-        doc, w[4] + S[24] / 2, -2 * w[1] - S[1] - S[9] - w[3] / 2, w[3], 0.8
-    )  # entrance door
-    west_east_door(
-        doc, w[4] + S[24] + w[1] / 2, -3 * w[1] - S[9] - S[12] - S[5] / 2, w[1], 0.7
-    )  # living room door
-    west_east_door(
-        doc, w[4] + S[7] + w[1] / 2, -2 * w[1] - S[9] - S[12] / 2, w[1], 0.7
-    )  # kitchen door
-    ##################################################
-
-    bathtab(doc, w[4] + w[1], -2 * w[1], 0.75, 1.1)
-    faucet(doc, S[8] / 2 + w[4], -1.5 * w[1], 0.6, 0.6)
-    faucet(doc, S[13] + S[20] / 4 + w[4], -1.5 * w[1], 0.6, 0.6)
-    toilet(doc, S[8] + S[11] / 3 + w[4] + w[1], -w[1] - S[9] + S[10], 0.55, 0.65)
-    cooktop(doc, S[13] + S[20] * 2 / 3 + w[4], -1.5 * w[1], 0.6, 0.6)
+    
+    fixtures_stay()
+    fixtures_go()
+    doors_stay()
+    doors_removed()
 
     doc.append(Command("end", "tikzpicture"))
 
@@ -995,80 +1066,14 @@ if __name__ == "__main__":
     draw_toiletroom_removed()
     draw_kitchen_removed()
     draw_livingroom_removed()
-
-     
-    ########################################################
-    # bedroom
-    print_list(
-        doc,
-        [[-S[13], S[14]], [S[23], -S[15]]],
-        w[3] + S[3] + w[1],
-        -4 * w[1] - S[5] - S[12] - S[9],
-    )
-
-    ########################################################
-    # balcony
-    print_list(
-        doc,
-        [
-            [
-                -S[21] * 8 / 9,
-                S[3]
-                + w[1]
-                + w[2]
-                + w[5]
-                + S[14]
-                - (w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20]),
-            ]
-        ],
-        w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20],
-        0,
-    )
-
-    ########################################################
-    # windows
-    print_window(
-        doc, w[4] + S[8] + w[1] + w[3] + S[11] + S[20], -w[1] - S[21] / 2 + w[6] / 2
-    )  # kitchen
-
-    print_window(
-        doc, w[4] + S[16] + w[1] + S[24], -2 * w[1] - S[21] - S[5] / 2 + w[6] / 2
-    )  # living
-
-    print_window(
-        doc,
-        w[4] + S[16] + w[1] + S[24],
-        -3 * w[1] - S[21] - S[5] - S[23] / 2 + w[6] / 2,
-    )  # bed
-
-    ###########################################################
-    # doors
-    north_south_door(
-        doc, w[4] + S[24] + S[14] / 3 + w[1], -5 * w[1] / 2 - S[5] - S[21], w[1], 0.7
-    )  # bedroom door
-    north_south_door(
-        doc, w[4] + 2 * S[8] / 3, -3 * w[1] / 2 - S[9], w[1], 0.5
-    )  # bathroom door
-    north_south_door(
-        doc, w[4] + S[8] + w[1] + S[11] / 2, -3 * w[1] / 2 - S[9], w[1], 0.5
-    )  # toilet door
-    north_south_door(
-        doc, w[4] + S[24] / 2, -2 * w[1] - S[1] - S[9] - w[3] / 2, w[3], 0.8
-    )  # entrance door
-    west_east_door(
-        doc, w[4] + S[24] + w[1] / 2, -3 * w[1] - S[9] - S[12] - S[5] / 2, w[1], 0.7
-    )  # living room door
-    west_east_door(
-        doc, w[4] + S[7] + w[1] / 2, -2 * w[1] - S[9] - S[12] / 2, w[1], 0.7, "red"
-    )  # kitchen door
-    ##################################################
-
-    bathtab(doc, w[4] + w[1], -2 * w[1], 0.75, 1.1)
-    faucet(doc, S[8] / 2 + w[4], -1.5 * w[1], 0.6, 0.6)
-    faucet(doc, S[13] + S[20] / 4 + w[4], -1.5 * w[1], 0.6, 0.6)
-    toilet(doc, S[8] + S[11] / 3 + w[4] + w[1], -w[1] - S[9] + S[10], 0.55, 0.65)
-    cooktop(doc, S[13] + S[20] * 2 / 3 + w[4], -1.5 * w[1], 0.6, 0.6)
-
+    draw_balcony()
+    draw_bedroom()
+    draw_windows() 
+    doors_stay()
+    doors_removed('red') 
+    fixtures_stay()
+    fixtures_go('red')
+    
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
@@ -1082,173 +1087,27 @@ if __name__ == "__main__":
 
     doc.append(NoEscape("\pagebreak"))
     # endregion
+    
     # region page 4 installed walls
     get_header()
     draw_perimeter()
-    draw_hallway_new()
+    draw_hallway_new('green')
+    draw_bathroom_new('green')
 
-    # # hallway with removed walls
-    # print_list(
-    #     doc,
-    #     [
-    #         [-S[1] + S[2], -w[1]],
-    #         [-S[2], S[3]],
-    #         [S[4] + w[1], 0],  # S[15]-S[16]
-    #     ],
-    #     w[4],
-    #     -S[9] - 2 * w[1],
-    # )
+    draw_kitchen_new('green')    
+     
+    doors_new()
 
-    # print_list(
-    #     doc,
-    #     [
-    #         [0, S[6] - w[2]],
-    #     ],
-    #     w[4] - w[1] + S[3] - S[16] + S[15],
-    #     -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
-    # )
-    # print_list(
-    #     doc,
-    #     [[0, S[24] - w[1]], [-S[12] - w[1], 2 * w[1]]],
-    #     w[4],
-    #     -S[9] - 2 * w[1],
-    #     "green",
-    # )
-
-    #####################################################
-    # bathroom new walls
-    print_list(doc, [[-S[9], 0]], w[4], -w[1])
-    print_list(
-        doc,
-        [[0, S[24]], [-S[12] - w[1], 0]],
-        w[4],
-        -S[9] - w[1],
-        "green",
-    )
-
-    print_list(doc, [[0, -S[8] - w[1]]], w[4] + S[8] + w[1], -w[1] - S[9] + S[9])
-
-    print_list(doc, [[-S[9] + S[10], 0]], w[4] + S[8] + w[1], -w[1])
-
-    #########################################################
-    # toilet new walls
-
-    print_list(
-        doc,
-        [[S[10], -S[11]]],
-        w[4] + S[8] + w[1] + S[11],
-        -w[1] - S[9] + S[10] - S[10],
-    )
-    print_list(
-        doc,
-        [[-w[1] - S[12], 0]],
-        w[4] + S[8] + w[1] + S[11],
-        -w[1] - S[9] + S[10] - S[10],
-        "green",
-    )
-    west_east_door(
-        doc, w[4] + S[24] - w[1] / 2, -(2 * w[1] + S[9] + S[12] / 2), w[1], 0.7, "green"
-    )
-    ###########################################################
-    # kitchen new walls
-    print_list(
-        doc,
-        [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[9] + S[18] / 2, 0]],
-        w[4] + S[8] + w[1] + w[3] + S[11],
-        -w[1],
-    )
-    print_list(
-        doc,
-        [[0, -w[2]], [-S[12] - w[1], w[2]]],
-        w[4] + S[8] + w[1] + w[3] + S[11],
-        -w[1] - S[9],
-        "green",
-    )
-    print_list(
-        doc,
-        [[0, S[19]], [S[18], -S[19]]],
-        w[4] + S[8] + w[1] + w[3] + S[11],
-        -w[1] - S[18],
-    )
-    north_south_door(
-        doc,
-        w[4] + S[8] + w[1] + w[3] + S[11] + S[20] / 3,
-        -w[1] - 0.5 * w[1] - S[21],
-        w[1],
-        0.7,
-        "green",
-    )  # kitchen door
-    #################################################
-    # living room
-
-    print_list(
-        doc,
-        [[0, S[15] + w[1]], [S[22], -(S[16] - S[17])], [S[5] - S[22], -S[17]]],
-        w[4] + S[24] + w[1] - S[15] + S[16] - w[1],
-        -3 * w[1] - S[12] - S[9] - S[5],
-    )
-    ########################################################
-    # bedroom
-    print_list(
-        doc,
-        [[-S[13], S[14]], [S[23], -S[15]]],
-        w[3] + S[3] + w[1],
-        -4 * w[1] - S[5] - S[12] - S[9],
-    )
-
-    ########################################################
-    # balcony
-    print_list(
-        doc,
-        [
-            [
-                -S[21] * 8 / 9,
-                S[3]
-                + w[1]
-                + w[2]
-                + w[5]
-                + S[14]
-                - (w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20]),
-            ]
-        ],
-        w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20],
-        0,
-    )
-
-    ########################################################
-    # windows
-    print_window(
-        doc, w[4] + S[8] + w[1] + w[3] + S[11] + S[20], -w[1] - S[21] / 2 + w[6] / 2
-    )  # kitchen
-
-    print_window(
-        doc, w[4] + S[16] + w[1] + S[24], -2 * w[1] - S[21] - S[5] / 2 + w[6] / 2
-    )  # living room
-
-    print_window(
-        doc,
-        w[4] + S[16] + w[1] + S[24],
-        -3 * w[1] - S[21] - S[5] - S[23] / 2 + w[6] / 2,
-    )  # bedroom
-
-    ###########################################################
-    # doors
-    north_south_door(
-        doc, w[4] + S[24] + S[14] / 3 + w[1], -5 * w[1] / 2 - S[5] - S[21], w[1], 0.7
-    )  # bedroom door
-
-    north_south_door(
-        doc, w[4] + S[24] / 2, -2 * w[1] - S[1] - S[9] - w[3] / 2, w[3], 0.8
-    )  # entrance door
-
-    ##################################################
-
-    bathtab(doc, w[4] + w[1], -2 * w[1], 0.75, 1.1)
-    faucet(doc, S[8] / 2 + w[4], -1.5 * w[1], 0.6, 0.6)
-    faucet(doc, S[13] + S[20] / 4 + w[4], -1.5 * w[1], 0.6, 0.6)
-    toilet(doc, S[8] + S[11] / 3 + w[4] + w[1], -w[1] - S[9] + S[10], 0.55, 0.65)
-    cooktop(doc, S[13] + S[20] * 2 / 3 + w[4], -1.5 * w[1], 0.6, 0.6)
-
+    lvec=[w[4]+S[24]+w[1],-3*w[1]-S[9]-S[12]-S[5]]
+    draw_livingroom_stay(lvec)
+    draw_bedroom()
+    draw_balcony()
+    draw_windows()  
+    doors_stay()
+    doors_new('green')
+    fixtures_stay()
+    fixtures_new('green')
+    
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
@@ -1263,202 +1122,23 @@ if __name__ == "__main__":
     doc.append(NoEscape("\pagebreak"))
     # endregion  
     # region page 5 final plan
-    doc.append(NoEscape(r"\vspace*{1cm} "))
-
-    doc.append(Command("centering"))
-
-    doc.append(Command("begin", "tikzpicture"))
-
-    # perimeter
+     
+    get_header()
     draw_perimeter()
-
-    # print_list(
-    #    doc,
-    #    [
-    #        [-(S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4]), w[4]],
-    #        [S[13] - S[4] - w[3] + w[4], S[3] + w[1] - w[3] + w[3] - w[4]],
-    #        [-(S[13] - S[4] - w[3] + w[4]), w[3] + S[14] + w[4]],
-    #        [
-    #            S[9] + S[1] + S[13] - S[4] + 2 * w[1] + w[4],
-    #            -(S[3] + w[1] - w[3] + w[2] - w[4] + w[5] + w[3] + S[14] + w[4]),
-    #        ],
-    #    ],
-    #    0,
-    #    0,
-    # )
-
-    ###########################################################
-
-    # hallway
-    print_list(
-        doc,
-        [
-            [-S[1] + S[2] + S[12], -w[1]],
-            [-S[2], S[3]],
-            [S[4] + w[1], 0],  # S[15]-S[16]
-        ],
-        w[4],
-        -S[9] - S[12] - 2 * w[1],
-    )
-
-    # print_list(
-    #    doc,
-    #    [
-    #        [0, S[6] - w[2]],
-    #    ],
-    #    w[4] - w[1] + S[3] - S[16] + S[15],
-    #    -S[9] - 2 * w[1] - S[1] + S[2] - S[2] + S[4] + S[5] + 2 * w[1],
-    # )
-    print_list(
-        doc,
-        [[0, S[24] - w[1]], [w[1], 0]],
-        w[4],
-        -S[9] - S[12] - 3 * w[1],
-    )
-
-    #####################################################
-    # bathroom
-    draw_vector(doc, A[0][0] - w[2], A[0][1], w[4] + S[26], A[0][1] - S[27])
-    draw_vector(
-        doc,
-        S[26] + w[4],
-        -w[1] - S[9] - w[1] - S[12],
-        S[26] + w[4] + S[25] * sin_alpha,
-        -w[1] - S[9] - w[1] - S[12] - S[25] * cos_alpha,
-    )
-    print_list(doc, [[-S[9] - w[1] - S[12], 0]], w[4], -w[1])
-    print_list(
-        doc,
-        # [[0, S[24]], [-S[12] - w[1], 0]],
-        [[0, S[26]]],
-        w[4],
-        -S[9] - w[1] - S[12] - w[1],
-    )
-
-    print_list(doc, [[0, -S[8] - w[1]]], w[4] + S[8] + w[1], -w[1] - S[9] + S[9])
-
-    print_list(doc, [[-S[9] + S[10], 0]], w[4] + S[8] + w[1], -w[1])
-
-    #########################################################
-    # toilet
-
-    print_list(
-        doc,
-        [[S[10], -S[11]]],
-        w[4] + S[8] + w[1] + S[11],
-        -w[1] - S[9] + S[10] - S[10],
-    )
-    print_list(
-        doc,
-        [[-w[1] - S[12], 0]],
-        w[4] + S[8] + w[1] + S[11],
-        -w[1] - S[9] + S[10] - S[10],
-    )
-
-    ###########################################################
-    # kitchen
-    print_list(
-        doc,
-        [[-S[18] / 3, -w[2]], [-S[18] / 6, w[2]], [-S[9] + S[18] / 2, 0]],
-        w[4] + S[8] + w[1] + w[3] + S[11],
-        -w[1],
-    )
-    print_list(
-        doc,
-        [[0, -w[2]], [-S[12] - w[1], w[2]]],
-        w[4] + S[8] + w[1] + w[3] + S[11],
-        -w[1] - S[9],
-    )
-    print_list(
-        doc,
-        [[0, S[19]], [S[18], -S[19]]],
-        w[4] + S[8] + w[1] + w[3] + S[11],
-        -w[1] - S[18],
-    )
-    north_south_door(
-        doc,
-        w[4] + S[8] + w[1] + w[3] + S[11] + S[20] / 3,
-        -w[1] - 0.5 * w[1] - S[21],
-        w[1],
-        0.7,
-    )  # kitchen door
-    #################################################
-    # living room
-    draw_vector(
-        doc, A[0][0] - w[2], A[0][1] - w[1], w[4] + S[26], A[0][1] - S[27] - w[1]
-    )
-    print_list(
-        doc,
-        [
-            [0, S[15] + w[1]],
-            [S[22], -(S[16] - S[17])],
-            [S[5] - S[22], -S[20] - w[2] - w[1] - w[7]],
-        ],
-        w[4] + S[24] + w[1] - S[15] + S[16] - w[1],
-        -3 * w[1] - S[12] - S[9] - S[5],
-    )
-    ########################################################
-    # bedroom
-    print_list(
-        doc,
-        [[-S[13], S[14]], [S[23], -S[15]]],
-        w[3] + S[3] + w[1],
-        -4 * w[1] - S[5] - S[12] - S[9],
-    )
-
-    ########################################################
-    # balcony
-    print_list(
-        doc,
-        [
-            [
-                -S[21] * 8 / 9,
-                S[3]
-                + w[1]
-                + w[2]
-                + w[5]
-                + S[14]
-                - (w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20]),
-            ]
-        ],
-        w[4] + S[8] + w[1] + w[3] + S[11] + w[4] + S[20],
-        0,
-    )
-
-    ########################################################
-    # windows
-    print_window(
-        doc, w[4] + S[8] + w[1] + w[3] + S[11] + S[20], -w[1] - S[21] / 2 + w[6] / 2
-    )  # kitchen
-
-    print_window(
-        doc, w[4] + S[16] + w[1] + S[24], -2 * w[1] - S[21] - S[5] / 2 + w[6] / 2
-    )  # living room
-
-    print_window(
-        doc,
-        w[4] + S[16] + w[1] + S[24],
-        -3 * w[1] - S[21] - S[5] - S[23] / 2 + w[6] / 2,
-    )  # bedroom
-
-    ###########################################################
-    # doors
-    north_south_door(
-        doc, w[4] + S[24] + S[14] / 3 + w[1], -5 * w[1] / 2 - S[5] - S[21], w[1], 0.7
-    )  # bedroom door
-
-    north_south_door(
-        doc, w[4] + S[24] / 2, -2 * w[1] - S[1] - S[9] - w[3] / 2, w[3], 0.8
-    )  # entrance door
-
-    ##################################################
-
-    bathtab(doc, w[4] + w[1], -2 * w[1], 0.75, 1.1)
-    faucet(doc, S[8] / 2 + w[4], -1.5 * w[1], 0.6, 0.6)
-    faucet(doc, S[13] + S[20] / 4 + w[4], -1.5 * w[1], 0.6, 0.6)
-    toilet(doc, S[8] + S[11] / 3 + w[4] + w[1], -w[1] - S[9] + S[10], 0.55, 0.65)
-    cooktop(doc, S[13] + S[20] * 2 / 3 + w[4], -1.5 * w[1], 0.6, 0.6)
-
+    draw_hallway_new()
+    draw_bathroom_new()
+    draw_kitchen_new()
+    
+    lvec=[w[4]+S[24]+w[1],-3*w[1]-S[9]-S[12]-S[5]]
+    draw_livingroom_stay(lvec)
+    draw_bedroom()
+    draw_balcony()
+    draw_windows() 
+    fixtures_stay()
+    fixtures_new()
+    doors_stay()
+    doors_new()
+    
     doc.append(Command("end", "tikzpicture"))
 
     doc.append(NoEscape(r"\vfill"))
